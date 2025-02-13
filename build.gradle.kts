@@ -37,11 +37,6 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    implementation("org.seleniumhq.selenium:selenium-java:4.14.1")
-    testImplementation("io.github.bonigarcia:selenium-jupiter:5.0.1")
-    testImplementation("io.github.bonigarcia:webdrivermanager:5.6.3")
-
     testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     testImplementation("org.seleniumhq.selenium:selenium-java:$seleniumJavaVersion")
     testImplementation("io.github.bonigarcia:selenium-jupiter:$seleniumJupiterVersion")
