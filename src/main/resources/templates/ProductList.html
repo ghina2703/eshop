@@ -35,12 +35,16 @@
         <tr>
             <th>Product Name</th>
             <th>Quantity</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="product: ${products}">
             <td th:text="${product.productName}"></td>
             <td th:text="${product.productQuantity}"></td>
+            <td>
+                <a th:href="@{/product/edit/{id}(id=${product.productId})}" class="btn btn-warning btn-sm">Edit</a>
+            </td>
         </tr>
         </tbody>
     </table>
