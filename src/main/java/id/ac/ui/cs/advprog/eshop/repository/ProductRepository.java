@@ -26,11 +26,26 @@ public class ProductRepository {
     }
 
     public Product update(Product updatedProduct) {
+        if (updatedProduct == null || updatedProduct.getProductId() == null) {
+            return null;
+        }
+
         for (Product product : productData) {
-            if (product.getProductId().equals(updatedProduct.getProductId())) {
-                product.setProductName(updatedProduct.getProductName());
-                product.setProductQuantity(updatedProduct.getProductQuantity());
-                return product;
+            if (updatedProduct.getProductId().equals(product.getProductId())) {
+                boolean isUpdated = false;
+
+                if (updatedProduct.getProductName() != null &&
+                        (product.getProductName() == null || !updatedProduct.getProductName().equals(product.getProductName()))) {
+                    product.setProductName(updatedProduct.getProductName());
+                    isUpdated = true;
+                }
+
+                if (updatedProduct.getProductQuantity() != product.getProductQuantity()) {
+                    product.setProductQuantity(updatedProduct.getProductQuantity());
+                    isUpdated = true;
+                }
+
+                return isUpdated ? product : product;
             }
         }
         return null;

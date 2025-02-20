@@ -66,4 +66,54 @@ class ProductTest {
         products = productRepository.findAll();
         assertFalse(products.contains(this.product), "Produk harus dihapus dari repository");
     }
+
+    @Test
+    void testDefaultConstructor() {
+        Product product = new Product();
+
+        assertNotNull(product.getProductId(), "Product ID harus diinisialisasi secara otomatis");
+        assertEquals("", product.getProductName(), "Product name harus default kosong");
+        assertEquals(0, product.getProductQuantity(), "Product quantity harus default 0");
+    }
+
+    @Test
+    void testParameterizedConstructor() {
+        String productId = "12345";
+        String productName = "Shampoo";
+        int productQuantity = 10;
+
+        Product product = new Product(productId, productName, productQuantity);
+
+        assertEquals(productId, product.getProductId(), "Product ID harus sesuai dengan input");
+        assertEquals(productName, product.getProductName(), "Product name harus sesuai dengan input");
+        assertEquals(productQuantity, product.getProductQuantity(), "Product quantity harus sesuai dengan input");
+    }
+
+    @Test
+    void testSetAndGetProductId() {
+        Product product = new Product();
+        String newId = "abc123";
+
+        product.setProductId(newId);
+        assertEquals(newId, product.getProductId(), "Setter harus mengubah Product ID dengan benar");
+    }
+
+    @Test
+    void testSetAndGetProductName() {
+        Product product = new Product();
+        String newName = "Conditioner";
+
+        product.setProductName(newName);
+        assertEquals(newName, product.getProductName(), "Setter harus mengubah Product name dengan benar");
+    }
+
+    @Test
+    void testSetAndGetProductQuantity() {
+        Product product = new Product();
+        int newQuantity = 50;
+
+        product.setProductQuantity(newQuantity);
+        assertEquals(newQuantity, product.getProductQuantity(), "Setter harus mengubah Product quantity dengan benar");
+    }
+
 }
