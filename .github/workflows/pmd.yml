@@ -6,7 +6,7 @@ on:
 
 jobs:
   pmd:
-    name: Run tests
+    name: PMD Code Analysis
     runs-on: ubuntu-22.04
     permissions:
       security-events: write
@@ -26,8 +26,9 @@ jobs:
         with:
           version: '7.0.0-rc4'
           sourcePath: 'src/main/java'
-          rulesets: 'rulesets/java/quickstart.xml'
+          rulesets: 'ruleset.xml'
           analyzeModifiedFilesOnly: false
+          reportFormat: 'sarif'
 
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v3
