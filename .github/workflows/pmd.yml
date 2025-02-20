@@ -6,7 +6,7 @@ on:
 
 jobs:
   pmd:
-    name: PMD Code Analysis
+    name: Run tests
     runs-on: ubuntu-22.04
     permissions:
       security-events: write
