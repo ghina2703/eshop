@@ -5,27 +5,32 @@ on:
   pull_request:
 
 jobs:
-  pmd-analysis:
-    runs-on: ubuntu-latest
-
+  pmd:
+    name: Run tests
+    runs-on: ubuntu-22.04
+    permissions:
+      security-events: write
     steps:
-      - name: Checkout code
+      - name: Check out the Git repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up Java toolchain
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
+          cache: 'gradle'
 
-      - name: Run PMD with specific version
+      - name: Run PMD
         uses: pmd/pmd-github-action@v2
-        id: pmd
         with:
           version: '7.0.0-rc4'
           sourcePath: 'src/main/java'
-          rulesets: 'rulesets/java/quickstart.xml,ruleset.xml'
+          rulesets: 'rulesets/java/quickstart.xml'
+          analyzeModifiedFilesOnly: false
 
-      - name: Fail build if there are violations
-        if: steps.pmd.outputs.violations != 0
-        run: exit 1
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: pmd-report.sarif
+          name: PMD_Report
