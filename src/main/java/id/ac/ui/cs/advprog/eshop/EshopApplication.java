@@ -9,9 +9,5 @@ public class EshopApplication {
     public static void main(String[] args) {
         SpringApplication.run(EshopApplication.class, args);
     }
-    
-    private EshopApplication() {
-        throw new UnsupportedOperationException("Utility class - cannot be instantiated");
-    }
 
 }
