@@ -21,7 +21,6 @@ class ProductRepositoryTest {
         productRepository = new ProductRepository();
     }
 
-    // Helper method untuk membuat produk dengan ID unik
     private Product createTestProduct(String name, int quantity) {
         Product product = new Product();
         product.setProductId(UUID.randomUUID().toString());
@@ -68,7 +67,7 @@ class ProductRepositoryTest {
         Product product = createTestProduct("Shampoo Original", 100);
         productRepository.create(product);
 
-        product.setProductName("Shampoo Plus"); // Hanya nama yang berubah
+        product.setProductName("Shampoo Plus");
         Product result = productRepository.update(product);
 
         assertNotNull(result, "Produk harus berhasil diperbarui");
@@ -153,7 +152,7 @@ class ProductRepositoryTest {
     @Test
     void testUpdateNonExistentProduct() {
         Product product = createTestProduct("Non-existent Product", 100);
-        product.setProductId("non-existent-id"); // Simulasi ID yang tidak ada
+        product.setProductId("non-existent-id");
 
         Product result = productRepository.update(product);
         assertNull(result, "Produk tidak ada, sehingga tidak bisa diperbarui");
@@ -164,7 +163,7 @@ class ProductRepositoryTest {
         Product product = createTestProduct("Shampoo Original", 100);
         productRepository.create(product);
 
-        product.setProductQuantity(200); // Hanya mengubah jumlah
+        product.setProductQuantity(200);
         Product result = productRepository.update(product);
 
         assertNotNull(result, "Produk harus berhasil diperbarui");
@@ -203,7 +202,7 @@ class ProductRepositoryTest {
 
     @Test
     void testUpdateProductWithEmptyName() {
-        Product product = createTestProduct("", 30); // Nama kosong
+        Product product = createTestProduct("", 30);
         productRepository.create(product);
 
         product.setProductName("Updated Name");
@@ -219,7 +218,7 @@ class ProductRepositoryTest {
         productRepository.create(product);
 
         Product invalidProduct = createTestProduct("Invalid", 30);
-        invalidProduct.setProductId(null); // Simulasi ID tidak valid
+        invalidProduct.setProductId(null);
 
         Product result = productRepository.update(invalidProduct);
         assertNull(result, "Produk dengan ID null tidak boleh diperbarui");
@@ -285,7 +284,7 @@ class ProductRepositoryTest {
         Product product = createTestProduct("Shampo", 50);
         productRepository.create(product);
 
-        product.setProductName("Shampoo"); // Hanya menambahkan satu karakter
+        product.setProductName("Shampoo");
         Product result = productRepository.update(product);
 
         assertNotNull(result, "Produk harus diperbarui");
@@ -325,7 +324,7 @@ class ProductRepositoryTest {
         Product product = createTestProduct("Shampoo", 100);
         productRepository.create(product);
 
-        product.setProductName(null); // Set name ke null
+        product.setProductName(null);
         Product result = productRepository.update(product);
 
         assertNotNull(result, "Produk tetap harus diperbarui meskipun nama null");
@@ -337,7 +336,7 @@ class ProductRepositoryTest {
         Product product = createTestProduct("Shampoo", 100);
         productRepository.create(product);
 
-        product.setProductQuantity(0); // Set quantity ke 0
+        product.setProductQuantity(0);
         Product result = productRepository.update(product);
 
         assertNotNull(result, "Produk tetap harus diperbarui meskipun jumlah 0");
@@ -365,7 +364,7 @@ class ProductRepositoryTest {
         Product product = createTestProduct("Shampoo", 100);
         productRepository.create(product);
 
-        product.setProductName(" "); // Nama hanya berisi spasi
+        product.setProductName(" ");
         Product result = productRepository.update(product);
 
         assertNotNull(result, "Produk harus tetap diperbarui meskipun namanya hanya berisi spasi");
