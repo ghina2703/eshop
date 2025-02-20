@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,12 +21,18 @@ class ProductRepositoryTest {
         productRepository = new ProductRepository();
     }
 
+    // Helper method untuk membuat produk dengan ID unik
+    private Product createTestProduct(String name, int quantity) {
+        Product product = new Product();
+        product.setProductId(UUID.randomUUID().toString());
+        product.setProductName(name);
+        product.setProductQuantity(quantity);
+        return product;
+    }
+
     @Test
     void testCreateAndFind() {
-        Product product = new Product();
-        product.setProductId("eb55e89f-1c39-460e-8860-71af6af63bd6");
-        product.setProductName("Sampo Cap Bambang");
-        product.setProductQuantity(100);
+        Product product = createTestProduct("Sampo Cap Bambang", 100);
         productRepository.create(product);
 
         List<Product> products = productRepository.findAll();
@@ -44,84 +51,341 @@ class ProductRepositoryTest {
 
     @Test
     void testFindAllIfMoreThanOneProduct() {
-        Product product1 = new Product();
-        product1.setProductId("eb55e89f-1c39-460e-8860-71af6af63bd6");
-        product1.setProductName("Sampo Cap Bambang");
-        product1.setProductQuantity(100);
-        productRepository.create(product1);
+        Product product1 = createTestProduct("Sampo Cap Bambang", 100);
+        Product product2 = createTestProduct("Sampo Cap User", 50);
 
-        Product product2 = new Product();
-        product2.setProductId("a0f9de46-90b1-437d-a0bf-d0821dde9096");
-        product2.setProductName("Sampo Cap User");
-        product2.setProductQuantity(50);
+        productRepository.create(product1);
         productRepository.create(product2);
 
         List<Product> products = productRepository.findAll();
         assertEquals(2, products.size(), "Seharusnya ada dua produk");
-        assertTrue(products.contains(product1), "Produk1 harus ada dalam daftar");
-        assertTrue(products.contains(product2), "Produk2 harus ada dalam daftar");
+        assertTrue(products.contains(product1));
+        assertTrue(products.contains(product2));
     }
 
     @Test
-    void testEditProductName() {
-        Product product = new Product();
-        product.setProductId("eb55e89f-1c39-460e-8860-71af6af63bd6");
-        product.setProductName("Sampo Cap Bambang");
-        product.setProductQuantity(100);
+    void testUpdateProductWithPartialChanges() {
+        Product product = createTestProduct("Shampoo Original", 100);
         productRepository.create(product);
 
-        product.setProductName("Sampo Cap Super");
-        productRepository.update(product);
-        List<Product> products = productRepository.findAll();
-        assertTrue(products.contains(product));
-        Product savedProduct = products.get(products.indexOf(product));
-        assertEquals("Sampo Cap Super", savedProduct.getProductName(), "Nama produk harus diperbarui");
+        product.setProductName("Shampoo Plus"); // Hanya nama yang berubah
+        Product result = productRepository.update(product);
+
+        assertNotNull(result, "Produk harus berhasil diperbarui");
+        assertEquals("Shampoo Plus", result.getProductName(), "Nama harus berubah");
+        assertEquals(100, result.getProductQuantity(), "Jumlah tidak boleh berubah");
     }
 
     @Test
-    void testEditProductQuantity() {
-        Product product = new Product();
-        product.setProductId("eb55e89f-1c39-460e-8860-71af6af63bd6");
-        product.setProductName("Sampo Cap Bambang");
-        product.setProductQuantity(100);
+    void testUpdateProductWithNoChanges() {
+        Product product = createTestProduct("Shampoo Original", 100);
         productRepository.create(product);
 
-        product.setProductQuantity(200);
-        productRepository.update(product);
-        List<Product> products = productRepository.findAll();
-        assertTrue(products.contains(product));
-        Product savedProduct = products.get(products.indexOf(product));
-        assertEquals(200, savedProduct.getProductQuantity(), "Jumlah produk harus diperbarui");
-    }
+        Product result = productRepository.update(product);
 
-    @Test
-    void testEditProductQuantityToNegative() {
-        Product product = new Product();
-        product.setProductId("eb55e89f-1c39-460e-8860-71af6af63bd6");
-        product.setProductName("Sampo Cap Bambang");
-        product.setProductQuantity(100);
-        productRepository.create(product);
-
-        product.setProductQuantity(-50);
-        productRepository.update(product);
-        List<Product> products = productRepository.findAll();
-        assertTrue(products.contains(product));
-        Product savedProduct = products.get(products.indexOf(product));
-        assertTrue(savedProduct.getProductQuantity() < 0, "Jumlah produk tidak boleh negatif");
+        assertNotNull(result, "Produk tetap ada meskipun tidak ada perubahan");
+        assertSame(product, result, "Produk yang dikembalikan harus memiliki referensi yang sama");
     }
 
     @Test
     void testDeleteProduct() {
-        Product product = new Product();
-        product.setProductId("eb55e89f-1c39-460e-8860-71af6af63bd6");
-        product.setProductName("Sampo Cap Bambang");
-        product.setProductQuantity(100);
-
+        Product product = createTestProduct("Sampo Cap Bambang", 100);
         productRepository.create(product);
+
         List<Product> products = productRepository.findAll();
-        assertTrue(products.contains(product), "Produk harus ada dalam repository");
+        assertTrue(products.contains(product));
+
         productRepository.delete(product.getProductId());
         products = productRepository.findAll();
         assertFalse(products.contains(product), "Produk harus dihapus dari repository");
     }
+
+    @Test
+    void testDeleteNonExistentProduct() {
+        productRepository.delete("non-existent-id");
+        List<Product> products = productRepository.findAll();
+        assertTrue(products.isEmpty(), "Menghapus produk yang tidak ada tidak boleh mengubah repository");
+    }
+
+    @Test
+    void testFindById() {
+        Product product = createTestProduct("Shampoo", 100);
+        productRepository.create(product);
+
+        Product foundProduct = productRepository.findById(product.getProductId());
+        assertNotNull(foundProduct, "Produk harus ditemukan");
+        assertEquals(product.getProductId(), foundProduct.getProductId());
+
+        Product notFoundProduct = productRepository.findById("non-existent-id");
+        assertNull(notFoundProduct, "Produk dengan ID tidak valid harus menghasilkan null");
+    }
+
+    @Test
+    void testCreateProductWithEmptyName() {
+        Product product = createTestProduct("", 10);
+        productRepository.create(product);
+
+        List<Product> products = productRepository.findAll();
+        assertTrue(products.contains(product), "Produk dengan nama kosong masih bisa ditambahkan");
+    }
+
+    @Test
+    void testCreateProductWithZeroQuantity() {
+        Product product = createTestProduct("Shampoo Zero", 0);
+        productRepository.create(product);
+
+        List<Product> products = productRepository.findAll();
+        assertTrue(products.contains(product), "Produk dengan jumlah nol harus bisa disimpan");
+    }
+
+    @Test
+    void testUpdateProductToNegativeQuantity() {
+        Product product = createTestProduct("Shampoo", 100);
+        productRepository.create(product);
+
+        product.setProductQuantity(-10);
+        Product updatedProduct = productRepository.update(product);
+
+        assertNotNull(updatedProduct, "Produk tetap harus diperbarui meskipun negatif");
+        assertEquals(-10, updatedProduct.getProductQuantity(), "Jumlah harus diperbarui walau negatif");
+    }
+
+    @Test
+    void testUpdateNonExistentProduct() {
+        Product product = createTestProduct("Non-existent Product", 100);
+        product.setProductId("non-existent-id"); // Simulasi ID yang tidak ada
+
+        Product result = productRepository.update(product);
+        assertNull(result, "Produk tidak ada, sehingga tidak bisa diperbarui");
+    }
+
+    @Test
+    void testUpdateProductWithQuantityChangeOnly() {
+        Product product = createTestProduct("Shampoo Original", 100);
+        productRepository.create(product);
+
+        product.setProductQuantity(200); // Hanya mengubah jumlah
+        Product result = productRepository.update(product);
+
+        assertNotNull(result, "Produk harus berhasil diperbarui");
+        assertEquals("Shampoo Original", result.getProductName(), "Nama tidak boleh berubah");
+        assertEquals(200, result.getProductQuantity(), "Jumlah harus berubah");
+    }
+
+    @Test
+    void testUpdateWithSameValues() {
+        Product product = createTestProduct("Shampoo", 50);
+        productRepository.create(product);
+
+        Product updatedProduct = createTestProduct("Shampoo", 50);
+        updatedProduct.setProductId(product.getProductId());
+
+        Product result = productRepository.update(updatedProduct);
+
+        assertNotNull(result, "Produk tetap harus ada meskipun tidak ada perubahan");
+        assertSame(product, result, "Referensi objek harus tetap sama karena tidak ada perubahan");
+    }
+
+    @Test
+    void testUpdateNullProduct() {
+        Product result = productRepository.update(null);
+        assertNull(result, "Update produk null harus menghasilkan null");
+    }
+
+    @Test
+    void testUpdateProductWithNullId() {
+        Product product = createTestProduct("Invalid Product", 30);
+        product.setProductId(null);
+
+        Product result = productRepository.update(product);
+        assertNull(result, "Update produk dengan ID null harus gagal");
+    }
+
+    @Test
+    void testUpdateProductWithEmptyName() {
+        Product product = createTestProduct("", 30); // Nama kosong
+        productRepository.create(product);
+
+        product.setProductName("Updated Name");
+        Product result = productRepository.update(product);
+
+        assertNotNull(result, "Produk harus berhasil diperbarui meskipun awalnya memiliki nama kosong");
+        assertEquals("Updated Name", result.getProductName(), "Nama harus diperbarui dengan nilai baru");
+    }
+
+    @Test
+    void testUpdateProductWithInvalidId() {
+        Product product = createTestProduct("Shampoo", 50);
+        productRepository.create(product);
+
+        Product invalidProduct = createTestProduct("Invalid", 30);
+        invalidProduct.setProductId(null); // Simulasi ID tidak valid
+
+        Product result = productRepository.update(invalidProduct);
+        assertNull(result, "Produk dengan ID null tidak boleh diperbarui");
+
+        invalidProduct.setProductId("");
+        result = productRepository.update(invalidProduct);
+        assertNull(result, "Produk dengan ID kosong tidak boleh diperbarui");
+    }
+
+    @Test
+    void testDeleteWithNullId() {
+        productRepository.delete(null);
+        List<Product> products = productRepository.findAll();
+        assertTrue(products.isEmpty(), "Hapus produk dengan ID null tidak boleh mengubah repository");
+    }
+
+    @Test
+    void testDeleteWithEmptyId() {
+        productRepository.delete("");
+        List<Product> products = productRepository.findAll();
+        assertTrue(products.isEmpty(), "Hapus produk dengan ID kosong tidak boleh mengubah repository");
+    }
+
+    @Test
+    void testUpdateProductWithZeroQuantityToNegative() {
+        Product product = createTestProduct("Shampoo", 0);
+        productRepository.create(product);
+
+        product.setProductQuantity(-5);
+        Product result = productRepository.update(product);
+
+        assertNotNull(result, "Produk harus tetap diperbarui meskipun jumlah negatif");
+        assertEquals(-5, result.getProductQuantity(), "Jumlah produk harus diperbarui menjadi negatif");
+    }
+
+    @Test
+    void testUpdateProductWithZeroQuantityToPositive() {
+        Product product = createTestProduct("Shampoo", 0);
+        productRepository.create(product);
+
+        product.setProductQuantity(10);
+        Product result = productRepository.update(product);
+
+        assertNotNull(result, "Produk harus diperbarui");
+        assertEquals(10, result.getProductQuantity(), "Jumlah produk harus berubah dari 0 ke 10");
+    }
+
+    @Test
+    void testDeleteAfterUpdate() {
+        Product product = createTestProduct("Shampoo", 10);
+        productRepository.create(product);
+
+        product.setProductQuantity(20);
+        productRepository.update(product);
+
+        productRepository.delete(product.getProductId());
+        List<Product> products = productRepository.findAll();
+        assertFalse(products.contains(product), "Produk harus dihapus setelah diperbarui");
+    }
+
+    @Test
+    void testUpdateProductWithSingleCharacterChange() {
+        Product product = createTestProduct("Shampo", 50);
+        productRepository.create(product);
+
+        product.setProductName("Shampoo"); // Hanya menambahkan satu karakter
+        Product result = productRepository.update(product);
+
+        assertNotNull(result, "Produk harus diperbarui");
+        assertEquals("Shampoo", result.getProductName(), "Nama produk harus diperbarui dengan satu karakter tambahan");
+    }
+
+    @Test
+    void testDeleteOneProductFromMultipleProducts() {
+        Product product1 = createTestProduct("Shampoo", 10);
+        Product product2 = createTestProduct("Conditioner", 20);
+
+        productRepository.create(product1);
+        productRepository.create(product2);
+
+        productRepository.delete(product1.getProductId());
+        List<Product> products = productRepository.findAll();
+
+        assertEquals(1, products.size(), "Seharusnya hanya satu produk yang tersisa");
+        assertFalse(products.contains(product1), "Produk pertama harus dihapus");
+        assertTrue(products.contains(product2), "Produk kedua harus tetap ada");
+    }
+
+    @Test
+    void testFindByIdWithNullId() {
+        Product result = productRepository.findById(null);
+        assertNull(result, "Mencari produk dengan ID null harus menghasilkan null");
+    }
+
+    @Test
+    void testFindByIdWithEmptyId() {
+        Product result = productRepository.findById("");
+        assertNull(result, "Mencari produk dengan ID kosong harus menghasilkan null");
+    }
+
+    @Test
+    void testUpdateProductWithNullName() {
+        Product product = createTestProduct("Shampoo", 100);
+        productRepository.create(product);
+
+        product.setProductName(null); // Set name ke null
+        Product result = productRepository.update(product);
+
+        assertNotNull(result, "Produk tetap harus diperbarui meskipun nama null");
+        assertNull(result.getProductName(), "Nama produk harus diperbarui menjadi null");
+    }
+
+    @Test
+    void testUpdateProductWithNullQuantity() {
+        Product product = createTestProduct("Shampoo", 100);
+        productRepository.create(product);
+
+        product.setProductQuantity(0); // Set quantity ke 0
+        Product result = productRepository.update(product);
+
+        assertNotNull(result, "Produk tetap harus diperbarui meskipun jumlah 0");
+        assertEquals(0, result.getProductQuantity(), "Jumlah produk harus diperbarui menjadi 0");
+    }
+
+    @Test
+    void testUpdateProductWithNoChangesMultipleTimes() {
+        Product product = createTestProduct("Shampoo", 100);
+        productRepository.create(product);
+
+        Product updatedProduct = createTestProduct("Shampoo", 100);
+        updatedProduct.setProductId(product.getProductId());
+
+        Product result1 = productRepository.update(updatedProduct);
+        Product result2 = productRepository.update(updatedProduct);
+
+        assertNotNull(result1, "Produk harus ada meskipun tidak ada perubahan");
+        assertSame(product, result1, "Referensi objek harus tetap sama");
+        assertSame(result1, result2, "Mengupdate tanpa perubahan berulang kali harus tetap mengembalikan objek yang sama");
+    }
+
+    @Test
+    void testUpdateProductWithWhitespaceName() {
+        Product product = createTestProduct("Shampoo", 100);
+        productRepository.create(product);
+
+        product.setProductName(" "); // Nama hanya berisi spasi
+        Product result = productRepository.update(product);
+
+        assertNotNull(result, "Produk harus tetap diperbarui meskipun namanya hanya berisi spasi");
+        assertEquals(" ", result.getProductName(), "Nama produk harus diperbarui menjadi string spasi");
+    }
+
+    @Test
+    void testUpdateProductWithNegativeQuantityMultipleTimes() {
+        Product product = createTestProduct("Shampoo", 100);
+        productRepository.create(product);
+
+        product.setProductQuantity(-10);
+        Product result1 = productRepository.update(product);
+
+        product.setProductQuantity(-20);
+        Product result2 = productRepository.update(product);
+
+        assertNotNull(result1, "Produk harus tetap diperbarui meskipun jumlah negatif");
+        assertNotNull(result2, "Produk harus tetap diperbarui dengan jumlah lebih negatif");
+        assertEquals(-20, result2.getProductQuantity(), "Jumlah produk harus diperbarui menjadi -20");
+    }
+
 }
