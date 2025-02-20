@@ -11,7 +11,7 @@ class EshopApplicationTests {
     @Test
     void testMainMethodRuns() {
         assertDoesNotThrow(() -> EshopApplication.main(new String[]{}),
-                "Metode main() seharusnya berjalan tanpa exception");
+                "Method main() harusnya execute tanpa exception");
     }
 
 }
