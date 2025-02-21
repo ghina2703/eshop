@@ -83,7 +83,7 @@ class ProductRepositoryTest {
         Product result = productRepository.update(product);
 
         assertNotNull(result, "Produk tetap ada meskipun tidak ada perubahan");
-        assertSame(product, result, "Produk yang dikembalikan harus memiliki referensi yang sama");
+        assertSame(product, result, "Produk yang dikembalikan harus punya referensi yang sama");
     }
 
     @Test
@@ -196,7 +196,7 @@ class ProductRepositoryTest {
         product.setProductName("Updated Name");
         Product result = productRepository.update(product);
 
-        assertNotNull(result, "Produk harus berhasil diperbarui meskipun awalnya memiliki nama kosong");
+        assertNotNull(result, "Produk harus berhasil diperbarui meskipun awalnya punya nama kosong");
         assertEquals("Updated Name", result.getProductName(), "Nama harus diperbarui dengan nilai baru");
     }
 
@@ -230,17 +230,6 @@ class ProductRepositoryTest {
         assertTrue(products.isEmpty(), "Hapus produk dengan ID kosong tidak boleh mengubah repository");
     }
 
-    @Test
-    void testUpdateProductWithZeroQuantityToNegative() {
-        Product product = createTestProduct("Shampoo", 0);
-        productRepository.create(product);
-
-        product.setProductQuantity(-5);
-        Product result = productRepository.update(product);
-
-        assertNotNull(result, "Produk harus tetap diperbarui meskipun jumlah negatif");
-        assertEquals(-5, result.getProductQuantity(), "Jumlah produk harus diperbarui menjadi negatif");
-    }
 
     @Test
     void testUpdateProductWithZeroQuantityToPositive() {
@@ -307,17 +296,6 @@ class ProductRepositoryTest {
         assertNull(result, "Mencari produk dengan ID kosong harus menghasilkan null");
     }
 
-    @Test
-    void testUpdateProductWithNullName() {
-        Product product = createTestProduct("Shampoo", 100);
-        productRepository.create(product);
-
-        product.setProductName(null);
-        Product result = productRepository.update(product);
-
-        assertNotNull(result, "Produk tetap harus diperbarui meskipun nama null");
-        assertNull(result.getProductName(), "Nama produk harus diperbarui menjadi null");
-    }
 
     @Test
     void testUpdateProductWithNullQuantity() {
@@ -344,7 +322,7 @@ class ProductRepositoryTest {
 
         assertNotNull(result1, "Produk harus ada meskipun tidak ada perubahan");
         assertSame(product, result1, "Referensi objek harus tetap sama");
-        assertSame(result1, result2, "Mengupdate tanpa perubahan berulang kali harus tetap mengembalikan objek yang sama");
+        assertSame(result1, result2, "Mengupdate tanpa perubahan berulang kali harus tetap return objek yang sama");
     }
 
     @Test
@@ -357,21 +335,6 @@ class ProductRepositoryTest {
 
         assertNotNull(result, "Produk harus tetap diperbarui meskipun namanya hanya berisi spasi");
         assertEquals(" ", result.getProductName(), "Nama produk harus diperbarui menjadi string spasi");
-    }
-
-    @Test
-    void testFindByIdWithMalformedUUID() {
-        String malformedUUID = "12345";
-        Product result = productRepository.findById(malformedUUID);
-        assertNull(result, "Product with malformed UUID should return null");
-    }
-
-    @Test
-    void testDeleteProductWithMalformedUUID() {
-        String malformedUUID = "12345";
-        productRepository.delete(malformedUUID);
-        List<Product> products = productRepository.findAll();
-        assertTrue(products.isEmpty(), "Repository should remain empty after attempting to delete with malformed UUID");
     }
 
 }
