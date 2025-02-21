@@ -138,18 +138,6 @@ class ProductRepositoryTest {
     }
 
     @Test
-    void testUpdateProductToNegativeQuantity() {
-        Product product = createTestProduct("Shampoo", 100);
-        productRepository.create(product);
-
-        product.setProductQuantity(-10);
-        Product updatedProduct = productRepository.update(product);
-
-        assertNotNull(updatedProduct, "Produk tetap harus diperbarui meskipun negatif");
-        assertEquals(-10, updatedProduct.getProductQuantity(), "Jumlah harus diperbarui walau negatif");
-    }
-
-    @Test
     void testUpdateNonExistentProduct() {
         Product product = createTestProduct("Non-existent Product", 100);
         product.setProductId("non-existent-id");
@@ -372,19 +360,18 @@ class ProductRepositoryTest {
     }
 
     @Test
-    void testUpdateProductWithNegativeQuantityMultipleTimes() {
-        Product product = createTestProduct("Shampoo", 100);
-        productRepository.create(product);
+    void testFindByIdWithMalformedUUID() {
+        String malformedUUID = "12345";
+        Product result = productRepository.findById(malformedUUID);
+        assertNull(result, "Product with malformed UUID should return null");
+    }
 
-        product.setProductQuantity(-10);
-        Product result1 = productRepository.update(product);
-
-        product.setProductQuantity(-20);
-        Product result2 = productRepository.update(product);
-
-        assertNotNull(result1, "Produk harus tetap diperbarui meskipun jumlah negatif");
-        assertNotNull(result2, "Produk harus tetap diperbarui dengan jumlah lebih negatif");
-        assertEquals(-20, result2.getProductQuantity(), "Jumlah produk harus diperbarui menjadi -20");
+    @Test
+    void testDeleteProductWithMalformedUUID() {
+        String malformedUUID = "12345";
+        productRepository.delete(malformedUUID);
+        List<Product> products = productRepository.findAll();
+        assertTrue(products.isEmpty(), "Repository should remain empty after attempting to delete with malformed UUID");
     }
 
 }

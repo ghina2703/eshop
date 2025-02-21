@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
             existingProduct.setProductQuantity(product.getProductQuantity());
             return productRepository.update(existingProduct);
         }
-        return null; // Jika tidak ditemukan, return null
+        return null;
     }
 
     @Override

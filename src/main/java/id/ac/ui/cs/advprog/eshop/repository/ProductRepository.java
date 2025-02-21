@@ -29,23 +29,12 @@ public class ProductRepository {
         if (updatedProduct == null || updatedProduct.getProductId() == null) {
             return null;
         }
-
         for (Product product : productData) {
             if (updatedProduct.getProductId().equals(product.getProductId())) {
-                boolean isUpdated = false;
+                product.setProductName(updatedProduct.getProductName());
 
-                if (updatedProduct.getProductName() != null &&
-                        (product.getProductName() == null || !updatedProduct.getProductName().equals(product.getProductName()))) {
-                    product.setProductName(updatedProduct.getProductName());
-                    isUpdated = true;
-                }
-
-                if (updatedProduct.getProductQuantity() != product.getProductQuantity()) {
-                    product.setProductQuantity(updatedProduct.getProductQuantity());
-                    isUpdated = true;
-                }
-
-                return isUpdated ? product : product;
+                product.setProductQuantity(updatedProduct.getProductQuantity());
+                return product;
             }
         }
         return null;
