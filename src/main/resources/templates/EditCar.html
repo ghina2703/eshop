@@ -10,7 +10,7 @@
 <div class="container mx-auto mt-16">
     <h1 class="text-3xl font-semibold text-center text-gray-800 mb-10">Edit Car Information</h1>
 
-    <form th:action="@{/car/editCar}" method="post" th:object="${car}" class="max-w-3xl bg-white p-8 rounded-lg shadow-lg mx-auto">
+    <form th:action="@{/car/editCar}" method="post" th:object="${car}" class="max-w-3xl bg-white p-8 rounded-lg shadow-lg mx-auto" onsubmit="return validateQuantity()">
         <input type="hidden" th:field="*{carId}" />
 
         <div class="mb-6">
@@ -28,7 +28,8 @@
         <div class="mb-6">
             <label for="carQuantity" class="block text-lg font-medium text-gray-700">Car Quantity</label>
             <input type="number" id="carQuantity" th:field="*{carQuantity}" name="carQuantity" th:value="${car.carQuantity}"
-                   class="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter car quantity">
+                   class="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter car quantity" required min="0">
+            <small id="quantityHelp" class="form-text text-muted">Quantity harus >= 0</small>
         </div>
 
         <div class="flex justify-end">
@@ -36,5 +37,16 @@
         </div>
     </form>
 </div>
+
+<script>
+    function validateQuantity() {
+        var quantity = document.getElementById('carQuantity').value;
+        if (quantity < 0) {
+            alert("Quantity tidak boleh negative");
+            return false;
+        }
+        return true;
+    }
+</script>
 </body>
 </html>

@@ -13,17 +13,24 @@ public class CarServiceImpl implements CarService {
     @Autowired
     private CarRepository carRepository;
 
+    private void validateCarQuantity(Car car) {
+        if (car.getCarQuantity() < 0) {
+            throw new IllegalArgumentException("Quantity tidak boleh negative");
+        }
+    }
+
     @Override
     public Car create(Car car) {
+        validateCarQuantity(car);
         return carRepository.create(car);
     }
 
     @Override
     public List<Car> findAll() {
         Iterator<Car> carIterator = carRepository.findAll();
-        List<Car> allCar = new ArrayList<>();
-        carIterator.forEachRemaining(allCar::add);
-        return allCar;
+        List<Car> allCars = new ArrayList<>();
+        carIterator.forEachRemaining(allCars::add);
+        return allCars;
     }
 
     @Override
@@ -33,6 +40,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Car update(String carId, Car car) {
+        validateCarQuantity(car);
         Car existingCar = carRepository.findById(carId);
         if (existingCar != null) {
             existingCar.setCarName(car.getCarName());

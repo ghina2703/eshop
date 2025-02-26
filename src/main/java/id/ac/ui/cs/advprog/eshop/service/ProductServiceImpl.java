@@ -11,8 +11,15 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    private void validateProductQuantity(Product product) {
+        if (product.getProductQuantity() < 0) {
+            throw new IllegalArgumentException("Quantity tidak boleh negative");
+        }
+    }
+
     @Override
     public Product create(Product product) {
+        validateProductQuantity(product);
         productRepository.create(product);
         return product;
     }
@@ -29,6 +36,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product update(String productId, Product product) {
+        validateProductQuantity(product);
         Product existingProduct = productRepository.findById(product.getProductId());
         if (existingProduct != null) {
             existingProduct.setProductName(product.getProductName());
