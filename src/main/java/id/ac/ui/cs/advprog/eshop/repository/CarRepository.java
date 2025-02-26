@@ -9,7 +9,6 @@ import java.util.UUID;
 
 @Repository
 public class CarRepository {
-    static int id = 0;
     private List<Car> carData = new ArrayList<>();
 
     public Car create(Car car) {
@@ -35,8 +34,7 @@ public class CarRepository {
     }
 
     public Car update(String id, Car updatedCar) {
-        for (int i = 0; i < carData.size(); i++) {
-            Car car = carData.get(i);
+        for (Car car : carData) {
             if (car.getCarId().equals(id)) {
                 car.setCarName(updatedCar.getCarName());
                 car.setCarColor(updatedCar.getCarColor());
