@@ -48,7 +48,6 @@ public class CarController extends ProductController {
         carservice.update(car.getCarId(), car);
         return "redirect:listCar";
     }
-
     @PostMapping("/deleteCar")
     public String deleteCar(@RequestParam("carId") String carId) {
         carservice.deleteCarById(carId);

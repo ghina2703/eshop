@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Edit Car</title>
+</head>
+<body class="bg-gray-100">
+<div class="container mx-auto mt-16">
+    <h1 class="text-3xl font-semibold text-center text-gray-800 mb-10">Edit Car Information</h1>
+
+    <form th:action="@{/car/editCar}" method="post" th:object="${car}" class="max-w-3xl bg-white p-8 rounded-lg shadow-lg mx-auto">
+        <input type="hidden" th:field="*{carId}" />
+
+        <div class="mb-6">
+            <label for="carName" class="block text-lg font-medium text-gray-700">Car Name</label>
+            <input type="text" id="carName" th:field="*{carName}" name="carName" th:value="${car.carName}"
+                   class="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter car name">
+        </div>
+
+        <div class="mb-6">
+            <label for="carColor" class="block text-lg font-medium text-gray-700">Car Color</label>
+            <input type="text" id="carColor" th:field="*{carColor}" name="carColor" th:value="${car.carColor}"
+                   class="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter car color">
+        </div>
+
+        <div class="mb-6">
+            <label for="carQuantity" class="block text-lg font-medium text-gray-700">Car Quantity</label>
+            <input type="number" id="carQuantity" th:field="*{carQuantity}" name="carQuantity" th:value="${car.carQuantity}"
+                   class="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter car quantity">
+        </div>
+
+        <div class="flex justify-end">
+            <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition duration-200">Save Changes</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
