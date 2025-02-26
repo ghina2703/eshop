@@ -32,8 +32,15 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public void update(String carId, Car car) {
-        carRepository.update(carId, car);
+    public Car update(String carId, Car car) {
+        Car existingCar = carRepository.findById(carId);
+        if (existingCar != null) {
+            existingCar.setCarName(car.getCarName());
+            existingCar.setCarColor(car.getCarColor());
+            existingCar.setCarQuantity(car.getCarQuantity());
+            return carRepository.update(carId, existingCar);
+        }
+        return null;
     }
 
     @Override
