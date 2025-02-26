@@ -105,13 +105,12 @@ class ProductControllerTest {
     @Test
     void testEditProductPost() throws Exception {
         Product product = createTestProduct("1", "Updated Product", 30);
-
         mockMvc.perform(post("/product/edit")
                         .flashAttr("product", product))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/product/list"));
 
-        verify(productService, times(1)).update(any(Product.class));
+        verify(productService, times(1)).update(any(String.class), any(Product.class));
     }
 
     @Test

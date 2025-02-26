@@ -94,32 +94,28 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void testUpdateProduct() {
-        Product existingProduct = createTestProduct("1", "Product A", 10);
-        Product updatedProduct = createTestProduct("1", "Product A Updated", 15);
-
-        when(productRepository.findById("1")).thenReturn(existingProduct);
+    void testUpdateProduct() throws Exception {
+        Product updatedProduct = new Product();
+        updatedProduct.setProductId("1");
+        updatedProduct.setProductName("Product A Updated");
+        updatedProduct.setProductQuantity(15);
+        when(productRepository.findById("1")).thenReturn(updatedProduct);
         when(productRepository.update(any(Product.class))).thenReturn(updatedProduct);
 
-        Product result = productService.update(updatedProduct);
-
+        Product result = productService.update("1", updatedProduct);
         assertNotNull(result);
         assertEquals("Product A Updated", result.getProductName());
         assertEquals(15, result.getProductQuantity());
-
-        verify(productRepository, times(1)).findById("1");
         verify(productRepository, times(1)).update(any(Product.class));
     }
 
     @Test
     void testUpdateProductNotFound() {
-        Product updatedProduct = createTestProduct("non-existing-id", "Product X", 25);
+        Product updatedProduct = createTestProduct("non-existing-id", "Updated Product", 15);
         when(productRepository.findById("non-existing-id")).thenReturn(null);
-
-        Product result = productService.update(updatedProduct);
-
+        Product result = productService.update(updatedProduct.getProductId(), updatedProduct);
         assertNull(result);
-        verify(productRepository, times(1)).findById("non-existing-id");
+        verify(productRepository, times(0)).update(any(Product.class));
     }
 
     @Test

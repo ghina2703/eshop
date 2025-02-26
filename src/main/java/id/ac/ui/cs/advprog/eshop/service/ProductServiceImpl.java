@@ -28,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product update(Product product) {
+    public Product update(String productId, Product product) {
         Product existingProduct = productRepository.findById(product.getProductId());
         if (existingProduct != null) {
             existingProduct.setProductName(product.getProductName());
