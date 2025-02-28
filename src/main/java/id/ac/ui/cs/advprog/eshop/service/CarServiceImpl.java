@@ -4,29 +4,30 @@ import id.ac.ui.cs.advprog.eshop.model.Car;
 import id.ac.ui.cs.advprog.eshop.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Service
 public class CarServiceImpl implements CarService {
+    private final CarRepository carRepository;
+
     @Autowired
-    private CarRepository carRepository;
+    public CarServiceImpl(CarRepository carRepository) {
+        this.carRepository = carRepository;  // Dependency Injection untuk CarRepository
+    }
 
     @Override
     public Car create(Car car) {
-        return carRepository.create(car);
+        return carRepository.create(car);  // Sederhana, hanya meneruskan ke repository
     }
 
     @Override
     public List<Car> findAll() {
-        List<Car> allCar = carRepository.findAll();
-        return allCar;
+        return carRepository.findAll();  // Ambil data dari repository, tidak ada logika tambahan
     }
 
     @Override
     public Car findById(String carId) {
-        return carRepository.findById(carId);
+        return carRepository.findById(carId);  // Ambil data berdasarkan ID
     }
 
     @Override
@@ -36,13 +37,13 @@ public class CarServiceImpl implements CarService {
             existingCar.setCarName(car.getCarName());
             existingCar.setCarColor(car.getCarColor());
             existingCar.setCarQuantity(car.getCarQuantity());
-            return carRepository.update(carId, existingCar);
+            return carRepository.update(carId, existingCar);  // Update data
         }
-        return null;
+        return null;  // Jika tidak ditemukan
     }
 
     @Override
     public void deleteCarById(String carId) {
-        carRepository.delete(carId);
+        carRepository.delete(carId);  // Hapus mobil berdasarkan ID
     }
 }

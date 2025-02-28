@@ -8,41 +8,36 @@ import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-    @Autowired
-    private ProductRepository productRepository;
 
-    private final ReadOnlyProductStorage readOnlyProductStorage;
-    private final WritableProductStorage writableProductStorage;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public ProductServiceImpl(ReadOnlyProductStorage readOnlyProductStorage, WritableProductStorage writableProductStorage) {
-        this.readOnlyProductStorage = readOnlyProductStorage;
-        this.writableProductStorage = writableProductStorage;
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Override
     public Product create(Product product) {
-        writableProductStorage.create(product);
-        return productRepository.create(product);
+        productRepository.create(product);
+        return product;
     }
 
     @Override
     public List<Product> findAll() {
-        return readOnlyProductStorage.findAll();
+        return productRepository.findAll();
     }
 
     @Override
     public Product findById(String productId) {
-        return readOnlyProductStorage.findById(productId);
+        return productRepository.findById(productId);
     }
 
     @Override
     public Product update(String productId, Product product) {
-        Product existingProduct = productRepository.findById(productId);
+        Product existingProduct = productRepository.findById(product.getProductId());
         if (existingProduct != null) {
             existingProduct.setProductName(product.getProductName());
             existingProduct.setProductQuantity(product.getProductQuantity());
-            writableProductStorage.update(productId, existingProduct);
             return productRepository.update(existingProduct);
         }
         return null;
@@ -50,7 +45,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void delete(String productId) {
-        writableProductStorage.delete(productId);
         productRepository.delete(productId);
     }
 }
