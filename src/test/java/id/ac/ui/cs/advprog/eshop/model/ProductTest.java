@@ -1,12 +1,28 @@
 package id.ac.ui.cs.advprog.eshop.model;
 
 import id.ac.ui.cs.advprog.eshop.repository.ProductRepository;
+import id.ac.ui.cs.advprog.eshop.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.List;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
 class ProductTest {
+
+    @Mock
+    private ProductService productService;  // Mock the ProductService
+
+    @InjectMocks
+    private ProductRepository productRepository;  // Inject the mock ProductService into ProductRepository
+
     Product product;
 
     @BeforeEach
@@ -58,10 +74,14 @@ class ProductTest {
 
     @Test
     void testDeleteProduct() {
-        ProductRepository productRepository = new ProductRepository();
+        when(productService.create(this.product)).thenReturn(this.product);
+        when(productService.findAll()).thenReturn(List.of(this.product));
+        doNothing().when(productService).delete(this.product.getProductId());
+
         productRepository.create(this.product);
         List<Product> products = productRepository.findAll();
         assertTrue(products.contains(this.product), "Produk harus ada di dalam repository");
+
         productRepository.delete(this.product.getProductId());
         products = productRepository.findAll();
         assertFalse(products.contains(this.product), "Produk harus dihapus dari repository");
@@ -115,5 +135,4 @@ class ProductTest {
         product.setProductQuantity(newQuantity);
         assertEquals(newQuantity, product.getProductQuantity(), "Setter harus mengubah Product quantity dengan benar");
     }
-
 }

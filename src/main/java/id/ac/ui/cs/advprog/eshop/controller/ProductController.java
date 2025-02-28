@@ -16,32 +16,36 @@ import java.util.List;
 @Controller
 @RequestMapping("/product")
 public class ProductController {
+
+    private final ProductService productService;
+
     @Autowired
-    private ProductService service;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @GetMapping("/create")
     public String createProductPage(Model model) {
-        Product product = new Product();
-        model.addAttribute("product", product);
+        model.addAttribute("product", new Product());
         return "CreateProduct";
     }
 
     @PostMapping("/create")
-    public String createProductPost(@ModelAttribute Product product, Model model) {
-        service.create(product);
+    public String createProductPost(@ModelAttribute Product product) {
+        productService.create(product);
         return "redirect:/product/list";
     }
 
     @GetMapping("/list")
     public String productListPage(Model model) {
-        List<Product> allProducts = service.findAll();
+        List<Product> allProducts = productService.findAll();
         model.addAttribute("products", allProducts);
         return "ProductList";
     }
 
     @GetMapping("/edit/{id}")
     public String editProductPage(@PathVariable("id") String id, Model model) {
-        Product product = service.findById(id);
+        Product product = productService.findById(id);
         if (product == null) {
             return "redirect:/product/list";
         }
@@ -51,14 +55,13 @@ public class ProductController {
 
     @PostMapping("/edit")
     public String editProductPost(@ModelAttribute Product product) {
-        service.update(product.getProductId(), product);
+        productService.update(product.getProductId(), product);
         return "redirect:/product/list";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") String id) {
-        service.delete(id);
+        productService.delete(id);
         return "redirect:/product/list";
     }
-
 }

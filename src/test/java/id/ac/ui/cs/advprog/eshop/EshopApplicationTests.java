@@ -6,12 +6,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest
-class EshopApplicationTests {
+class EshopApplicationTest {
 
     @Test
-    void testMainMethodRuns() {
-        assertDoesNotThrow(() -> EshopApplication.main(new String[]{}),
-                "Method main() harusnya execute tanpa exception");
+    void main_shouldRunWithoutExceptions() {
+        assertDoesNotThrow(() -> EshopApplication.main(new String[]{}));
     }
-
 }
