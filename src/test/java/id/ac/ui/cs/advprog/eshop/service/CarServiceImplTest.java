@@ -54,20 +54,25 @@ class CarServiceImplTest {
 
     @Test
     void testFindAllCars() {
+        // Creating test data
         List<Car> allCars = asList(
                 createTestCar("1", "Toyota", "Red", 5),
                 createTestCar("2", "Honda", "Blue", 3)
         );
 
-        Iterator<Car> carIterator = allCars.iterator();
-        when(carRepository.findAll()).thenReturn(carIterator);
+        // Mocking findAll() to return a List instead of an Iterator
+        when(carRepository.findAll()).thenReturn(allCars);
+
+        // Calling the method
         List<Car> cars = carService.findAll();
 
+        // Asserting results
         assertNotNull(cars);
         assertEquals(2, cars.size());
         assertEquals("Toyota", cars.get(0).getCarName());
         assertEquals("Honda", cars.get(1).getCarName());
 
+        // Verifying interactions with carRepository
         verify(carRepository, times(1)).findAll();
     }
 

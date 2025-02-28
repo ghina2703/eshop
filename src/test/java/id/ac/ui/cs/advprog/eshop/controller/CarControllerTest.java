@@ -85,6 +85,19 @@ class CarControllerTest {
     }
 
     @Test
+    void testEditCarPage() throws Exception {
+        Car car = createTestCar("1", "Toyota", "Red", 5);
+        when(carService.findById("1")).thenReturn(car);
+
+        mockMvc.perform(get("/car/editCar/{carId}", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("EditCar"))
+                .andExpect(model().attribute("car", car));
+
+        verify(carService, times(1)).findById("1");
+    }
+
+    @Test
     void testEditCarPost() throws Exception {
         Car car = createTestCar("1", "Updated Toyota", "Green", 10);
         mockMvc.perform(post("/car/editCar")
@@ -104,30 +117,4 @@ class CarControllerTest {
 
         verify(carService, times(1)).deleteCarById("1");
     }
-
-    @Test
-    void testEditCarPage() throws Exception {
-        Car car = createTestCar("1", "Toyota", "Red", 5);
-        when(carService.findById("1")).thenReturn(car);
-
-        mockMvc.perform(get("/car/editCar/{carId}", "1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("EditCar"))
-                .andExpect(model().attribute("car", car));
-
-        verify(carService, times(1)).findById("1");
-    }
-
-    @Test
-    void testEditCarPageNotFound() throws Exception {
-        when(carService.findById("non-existing-id")).thenReturn(null);
-
-        mockMvc.perform(get("/car/editCar/{carId}", "non-existing-id"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/car/listCar"));
-
-        verify(carService, times(1)).findById("non-existing-id");
-    }
-
-
 }

@@ -11,28 +11,38 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    private final ReadOnlyProductStorage readOnlyProductStorage;
+    private final WritableProductStorage writableProductStorage;
+
+    @Autowired
+    public ProductServiceImpl(ReadOnlyProductStorage readOnlyProductStorage, WritableProductStorage writableProductStorage) {
+        this.readOnlyProductStorage = readOnlyProductStorage;
+        this.writableProductStorage = writableProductStorage;
+    }
+
     @Override
     public Product create(Product product) {
-        productRepository.create(product);
-        return product;
+        writableProductStorage.create(product);
+        return productRepository.create(product);
     }
 
     @Override
     public List<Product> findAll() {
-        return productRepository.findAll();
+        return readOnlyProductStorage.findAll();
     }
 
     @Override
     public Product findById(String productId) {
-        return productRepository.findById(productId);
+        return readOnlyProductStorage.findById(productId);
     }
 
     @Override
     public Product update(String productId, Product product) {
-        Product existingProduct = productRepository.findById(product.getProductId());
+        Product existingProduct = productRepository.findById(productId);
         if (existingProduct != null) {
             existingProduct.setProductName(product.getProductName());
             existingProduct.setProductQuantity(product.getProductQuantity());
+            writableProductStorage.update(productId, existingProduct);
             return productRepository.update(existingProduct);
         }
         return null;
@@ -40,6 +50,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void delete(String productId) {
+        writableProductStorage.delete(productId);
         productRepository.delete(productId);
     }
 }
