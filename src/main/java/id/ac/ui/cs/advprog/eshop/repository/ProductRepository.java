@@ -3,12 +3,12 @@ package id.ac.ui.cs.advprog.eshop.repository;
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
+import java.util.List;
 
-import java.util.*;
-
-@Service
+@Repository
 public class ProductRepository {
+
     private final ProductService productService;
 
     @Autowired

@@ -12,22 +12,22 @@ public class CarServiceImpl implements CarService {
 
     @Autowired
     public CarServiceImpl(CarRepository carRepository) {
-        this.carRepository = carRepository;  // Dependency Injection untuk CarRepository
+        this.carRepository = carRepository;
     }
 
     @Override
     public Car create(Car car) {
-        return carRepository.create(car);  // Sederhana, hanya meneruskan ke repository
+        return carRepository.create(car);
     }
 
     @Override
     public List<Car> findAll() {
-        return carRepository.findAll();  // Ambil data dari repository, tidak ada logika tambahan
+        return (List<Car>) carRepository.findAll();
     }
 
     @Override
     public Car findById(String carId) {
-        return carRepository.findById(carId);  // Ambil data berdasarkan ID
+        return carRepository.findById(carId);
     }
 
     @Override
@@ -37,13 +37,13 @@ public class CarServiceImpl implements CarService {
             existingCar.setCarName(car.getCarName());
             existingCar.setCarColor(car.getCarColor());
             existingCar.setCarQuantity(car.getCarQuantity());
-            return carRepository.update(carId, existingCar);  // Update data
+            return carRepository.update(carId, existingCar);
         }
-        return null;  // Jika tidak ditemukan
+        return null;
     }
 
     @Override
     public void deleteCarById(String carId) {
-        carRepository.delete(carId);  // Hapus mobil berdasarkan ID
+        carRepository.delete(carId);
     }
 }

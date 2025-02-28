@@ -1,44 +1,48 @@
 package id.ac.ui.cs.advprog.eshop.repository;
 
 import id.ac.ui.cs.advprog.eshop.model.Car;
-import id.ac.ui.cs.advprog.eshop.service.CarService;
-import id.ac.ui.cs.advprog.eshop.service.CarIdGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
+import java.util.UUID;
 @Repository
 public class CarRepository {
-    @Autowired
-    private final CarService carService;
-    private final CarIdGenerator carIdGenerator;
 
-    @Autowired
-    public CarRepository(CarService carService, CarIdGenerator carIdGenerator) {
-        this.carService = carService;
-        this.carIdGenerator = carIdGenerator;
-    }
-
-    public Car create(Car car) {
-        if (car.getCarId() == null) {
-            car.setCarId(carIdGenerator.generateCarId());
+    private final List<Car> carData = new ArrayList<>();
+    public Car create(Car car){
+        if(car.getCarId() == null){
+            UUID uuid = UUID.randomUUID();
+            car.setCarId(uuid.toString());
         }
-        return carService.create(car);
+        carData.add(car);
+        return car;
+    }
+    public Iterator<Car> findAll(){
+        return carData.iterator();
     }
 
-    public List<Car> findAll() {
-        return carService.findAll();
+    public Car findById(String id){
+        for(Car car: carData){
+            if(car.getCarId().equals(id)){
+                return car;
+            }
+        }
+        return null;
     }
 
-    public Car findById(String id) {
-        return carService.findById(id);
+    public Car update(String id, Car updatedCar){
+        for (Car car : carData) {
+            if (car.getCarId().equals(id)) {
+                car.setCarName(updatedCar.getCarName());
+                car.setCarColor(updatedCar.getCarColor());
+                car.setCarQuantity(updatedCar.getCarQuantity());
+                return car;
+            }
+        }
+        return null;
     }
-
-    public Car update(String id, Car updatedCar) {
-        return carService.update(id, updatedCar);
-    }
-
     public void delete(String id) {
-        carService.deleteCarById(id);
+        carData.removeIf(car -> car.getCarId().equals(id));
     }
 }
