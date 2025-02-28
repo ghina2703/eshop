@@ -27,7 +27,7 @@ public class CarController {
 
     @GetMapping("/createCar")
     public String createCarPage(Model model) {
-        model.addAttribute("car", new Car());
+        model.addAttribute("car", new Car("someProductId", "someProductName", 10, "Red"));
         return "CreateCar";
     }
 
@@ -57,7 +57,7 @@ public class CarController {
 
     @PostMapping("/editCar")
     public String editCarPost(@ModelAttribute Car car) {
-        carService.update(car.getCarId(), car);
+        carService.update(car.getProductId(), car);
         return "redirect:/car/listCar";
     }
 

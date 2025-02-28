@@ -8,6 +8,8 @@
 
 **Link Koyeb**  : https://ridiculous-debor-ghina27-238eb2a3.koyeb.app/product/list
 
+**Link Koyeb**  : https://ridiculous-debor-ghina27-238eb2a3.koyeb.app/car/listCar 
+
 # 🚀 Tutorial 3️⃣
 
 ### Reflection
@@ -22,7 +24,7 @@
 
 #### **OCP (Open/Closed Principle)**
 - Kode harus _open_ untuk _extension_ tapi tertutup untuk _modification_. Berarti kode yang sudah ada tidak perlu dimodifikasi untuk menambahkan fitur baru.
-_- **Implementasi**: Dengan mengimplementasikan _interface_ `CarService`, saya membuat `CarServiceImpl` _open_ untuk _extension_ (misalnya dengan menambahkan implementasi penyimpanan baru) tanpa harus memodifikasi_ class _`CarServiceImpl` itu sendiri. Contohnya, kita bisa menambahkan implementasi `InMemoryCarService` dengan mudah tanpa mengubah kode dalam `CarServiceImpl`.
+- **Implementasi**: Dengan mengimplementasikan _interface_ `CarService`, saya membuat `CarServiceImpl` _open_ untuk _extension_ (misalnya dengan menambahkan implementasi penyimpanan baru) tanpa harus memodifikasi_ class _`CarServiceImpl` itu sendiri. Contohnya, kita bisa menambahkan implementasi `InMemoryCarService` dengan mudah tanpa mengubah kode dalam `CarServiceImpl`.
 
 #### **DIP (Dependency Inversion Principle)**
 - Modul tingkat tinggi (seperti `CarServiceImpl`) tidak boleh bergantung pada modul tingkat rendah (seperti `CarRepository`). Kedua modul harus bergantung pada _abstractions_ (_interface_), bukan implementasi langsung.
@@ -30,11 +32,8 @@ _- **Implementasi**: Dengan mengimplementasikan _interface_ `CarService`, saya m
 
 #### **LSP (Liskov Substitution Principle)**
 - Objek dari _superclass_ harus bisa digantikan dengan objek dari _subclass_ tanpa mempengaruhi kebenaran program.
-- **Implementasi**: Karena saya menggunakan _interface_ `CarService`, setiap implementasi (seperti di `InMemoryCarService`) bisa digunakan sebagai pengganti tanpa mempengaruhi perilaku _class_ `CarServiceImpl`. Contohnya saya mengganti `InMemoryCarService` tanpa mengubah _code_ dalam `CarServiceImpl`, yang memastikan prinsip LSP diterapkan.
+  - **Implementasi**: LSP diterapkan dengan menggunakan class `ProductService` yang punya beberapa implementasi, misalnya ProductServiceImpl. Sebagai contoh, jika suatu saat kita perlu mengganti ProductServiceImpl dengan implementasi lain yang memenuhi kontrak yang sama (misalnya menggunakan service berbasis file atau database), kita dapat melakukannya tanpa merubah kode yang menggunakan ProductService. Hal ini memastikan bahwa aplikasi tetap bekerja dengan baik meskipun kita mengganti implementasi detailnya, selama implementasi baru tersebut sesuai dengan antarmuka ProductService.
 
-#### **ISP (Interface Segregation Principle)**
-- Jangan memaksa klien untuk bergantung pada metode yang tidak mereka gunakan. Sebaiknya, buat _interface_ yang lebih kecil dan spesifik untuk kebutuhan masing-masing.
-- **Implementasi**: Saya punya dua _interface_ yang terpisah: `ReadOnlyProductStorage` dan `WritableProductStorage`. Keduanya punya tanggung jawab masing-masing—yang satu hanya untuk membaca data (_find operations_), dan yang satu lagi untuk melakukan operasi (_create, update, delete_). Dengan cara ini, klien yang hanya perlu membaca data tidak perlu bergantung pada metode yang terkait dengan _write data_, dan sebaliknya.
 
 </details>
 
@@ -43,25 +42,36 @@ _- **Implementasi**: Dengan mengimplementasikan _interface_ `CarService`, saya m
 
   <summary>Click to Expand: 2️⃣ Keuntungan dari penerapan prinsip SOLID pada proyek ini</summary>
 
-#### **a. Mudah untuk melakukan perubahan dan pemeliharaan**
+#### **Mudah untuk melakukan perubahan dan pemeliharaan kedepannya**
 Contohnya jika kita ingin mengubah cara penyimpanan mobil (misalnya, mengganti penyimpanan in-memory dengan database), kita cukup mengganti implementasi `CarStorage` tanpa harus mengubah kode di `CarServiceImpl`. Ini membuat aplikasi lebih mudah dipelihara dan lebih fleksibel dalam menghadapi perubahan kebutuhan.
 
-**Contoh**: Jika ingin menggunakan database untuk menyimpan data mobil, kita cukup membuat kelas baru yang mengimplementasikan `CarStorage` (misalnya `DatabaseCarStorage`) dan menggantikan implementasi `InMemoryCarStorage` dengan `DatabaseCarStorage`.
+#### **Lebih mudah untuk Testing**
+Kode yang mengikuti prinsip SOLID, terutama OCP dan DIP, lebih mudah untuk diuji karena bergantung pada abstractions (interface), bukan implementasi langsung, yang memungkinkan untuk menggunakan teknik seperti mock testing. Misalnya, untuk menguji `CarServiceImpl`, saya menggunakan mock dari `CarRepository` atau `CarService`, sehingga tidak perlu terhubung ke database.
 
-#### **b. Lebih mudah diuji (Testing)**
-Kode yang mengikuti prinsip SOLID, terutama OCP dan DIP, lebih mudah untuk diuji karena bergantung pada abstractions (interface), bukan implementasi konkret. Ini memungkinkan kita untuk menggunakan teknik seperti mock testing. Misalnya, untuk menguji `CarServiceImpl`, kita bisa menggunakan mock dari `CarRepository` atau `CarStorage`, sehingga kita tidak perlu terhubung ke database atau sistem penyimpanan riil saat melakukan pengujian.
+#### **Bisa diperluas dengan mudah**
+Kalau suatu saat kita membutuhkan fitur baru untuk mencatat log setiap kali ada Car yang diperbarui, kita cukup membuat subclass atau decorator yang mengelola logging, dan menyuntikkan logika tersebut ke dalam alur yang ada tanpa memodifikasi kode utama di `CarServiceImpl`.
 
-**Contoh**: Kita dapat menguji logika bisnis di `CarServiceImpl` dengan membuat mock dari `CarRepository` atau `CarStorage` menggunakan Mockito, tanpa perlu tergantung pada implementasi nyata.
+#### **Meminimalkan ketergantungan**
+Dengan menerapkan prinsip DIP dan ISP, bisa mengurangi ketergantungan antara kelas yang tidak perlu. Ini meminimalkan _tight coupling_ dalam kode, sehingga lebih fleksibel saat ada kebutuhan untuk mengganti komponen. 
+Contohnya `CarServiceImpl` hanya bergantung pada interface `CarStorage`umum, bukan implementasi langsung, yang memudahkan penggantian interface kalau diperlukan tanpa mempengaruhi layanan utama.
 
-#### **c. Dapat diperluas dengan mudah**
-Dengan mengikuti prinsip OCP dan DIP, kita dapat menambahkan fungsionalitas baru ke sistem tanpa mengubah kode yang ada. Prinsip ini memastikan bahwa setiap tambahan atau perubahan fungsionalitas dapat dilakukan dengan menambahkan kelas baru atau membuat subclass, bukan dengan mengubah kelas yang ada. Ini mengurangi risiko terjadinya regresi (kesalahan pada fitur yang sudah ada).
+</details>
 
-**Contoh**: Jika suatu saat kita membutuhkan fitur baru untuk mencatat log setiap kali ada mobil yang diperbarui, kita cukup membuat subclass atau decorator yang mengelola logging, dan menyuntikkan logika tersebut ke dalam alur yang ada tanpa memodifikasi kode utama di `CarServiceImpl`.
+---
+<details>
+  <summary>Click to Expand: 3️⃣ Kerugian Tidak Menerapkan SOLID Principles</summary>
 
-#### **d. Meminimalkan ketergantungan**
-Dengan menerapkan prinsip DIP dan ISP, kita mengurangi ketergantungan antara kelas yang tidak perlu. Ini meminimalkan kekakuan (tight coupling) dalam kode, sehingga lebih fleksibel saat ada kebutuhan untuk mengganti komponen atau menambah komponen baru. Dengan memisahkan antarmuka untuk membaca dan menulis data, kita memastikan bahwa komponen yang hanya membutuhkan data tidak perlu bergantung pada operasi penulisan yang tidak mereka perlukan.
+- Tanpa **Single Responsibility Principle (SRP)**, kelas bisa punya banyak tanggung jawab, sehingga perubahan kecil pada satu bagian bisa mempengaruhi bagian lainnya. Ini membuat pemeliharaan kode lebih sulit dan berisiko.
 
-**Contoh**: `CarServiceImpl` hanya bergantung pada antarmuka `CarStorage` yang umum, bukan implementasi konkret, yang memudahkan penggantian antarmuka jika diperlukan tanpa mempengaruhi layanan utama.
+- Tanpa **Dependency Inversion Principle (DIP)**, bisa membuat kesulitan untuk mengganti dependensi dalam pengujian, sehingga pengujian jadi lebih rumit dan tidak fleksibel.
+
+- Tanpa **Open/Closed Principle (OCP)**, menambah fitur baru sering memerlukan perubahan besar pada kode yang lama, itu bisa merusak bagian lain dari aplikasi.
+
+- Tanpa **Liskov Substitution Principle (LSP)** dan **Interface Segregation Principle (ISP)**, ketergantungan antara kelas menjadi terlalu kuat (_tight coupling_), menyulitkan penggantian atau pengembangan bagian tertentu tanpa mempengaruhi seluruh sistem.
+
+- Tanpa **SRP** dan **ISP**, kode menjadi duplikat dan tersebar di banyak tempat, yang meningkatkan kompleksitas dan kesulitan pemeliharaan kedepannya.
+
+- Tanpa **DIP**, jadi terikat pada implementasi langsung, yang membuat penggantian teknologi atau sistem lebih susah.
 
 </details>
 
