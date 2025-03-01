@@ -4,35 +4,34 @@ import id.ac.ui.cs.advprog.eshop.model.Car;
 import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public class CarRepository {
     private final List<Car> carData = new ArrayList<>();
 
     public Car create(Car car) {
-        if (car.getCarId() == null) {
-            car.setCarId(generateCarId());
+        if (car.getProductId() == null) {
+            car.setProductId(generateCarId());
         }
         carData.add(car);
         return car;
     }
 
     public List<Car> findAll() {
-        return carData;
+        return new ArrayList<>(carData);
     }
 
     public Car findById(String id) {
-        for (Car car : carData) {
-            if (car.getCarId().equals(id)) {
-                return car;
-            }
-        }
-        return null;
+        return carData.stream()
+                .filter(car -> car.getProductId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     public Car update(String id, Car updatedCar) {
         for (Car car : carData) {
-            if (car.getCarId().equals(id)) {
+            if (car.getProductId().equals(id)) {
                 car.setProductName(updatedCar.getProductName());
                 car.setCarColor(updatedCar.getCarColor());
                 car.setProductQuantity(updatedCar.getProductQuantity());
@@ -43,10 +42,10 @@ public class CarRepository {
     }
 
     public void delete(String id) {
-        carData.removeIf(car -> car.getCarId().equals(id));
+        carData.removeIf(car -> car.getProductId().equals(id));
     }
 
     private String generateCarId() {
-        return java.util.UUID.randomUUID().toString();
+        return UUID.randomUUID().toString();
     }
 }

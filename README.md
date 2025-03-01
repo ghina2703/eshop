@@ -6,9 +6,9 @@
 
 **Kode Asdos**  : **RFL**
 
-**Link Koyeb ADV Shop**  : https://ridiculous-debor-ghina27-238eb2a3.koyeb.app/product/list
+**Link Koyeb ADV Shop** : https://ridiculous-debor-ghina27-238eb2a3.koyeb.app/product/list
 
-**Link Koyeb Car**  : https://ridiculous-debor-ghina27-238eb2a3.koyeb.app/car/listCar 
+**Link Koyeb Car**      : https://ridiculous-debor-ghina27-238eb2a3.koyeb.app/car/listCar 
 
 # 🚀 Tutorial 3️⃣
 
@@ -19,21 +19,25 @@
   <summary>Click to Expand: 1️⃣ Prinsip SOLID yang saya terapkan dalam proyek ini</summary>
 
 #### **SRP (Single Responsibility Principle)**
-- Dalam modul ini, _class_ `CarServiceImpl` hanya bertanggung jawab atas bisnis logic terkait Car (create, find, update, dan delet Car).
-- Penyimpanan data dikelola oleh `CarRepository`, jadi setiap _class_ punya tanggung jawab yang jelas.
+Dalam modul ini, _class_ `CarServiceImpl` hanya bertanggung jawab atas bisnis logic terkait Car (create, find, update, dan delet Car). 
+Penyimpanan data dikelola oleh `CarRepository`, jadi setiap _class_ punya tanggung jawab yang jelas.
 
 #### **OCP (Open/Closed Principle)**
-- Kode harus **terbuka untuk _extension_, tapi tertutup untuk _modification_**.
-- Saya menerapkan OCP dengan menggunakan _interface_ `CarService`.
-- Jika saya ingin menambahkan cara penyimpanan baru, saya bisa membuat implementasi baru tanpa mengubah kode yang sudah ada.
+Kode harus **terbuka untuk _extension_, tapi tertutup untuk _modification_**. Saya menerapkan OCP dengan menggunakan _interface_ `CarService`.
+Kalau saya ingin menambahkan cara penyimpanan baru, saya bisa membuat implementasi baru tanpa mengubah kode yang sudah ada.
 
 #### **LSP (Liskov Substitution Principle)**
-- Saya membuat objek _superclass_ bisa digantikan oleh objek _subclass_ tanpa mengubah perilaku aplikasi.
-- Contohnya, jika saya mengganti implementasi `ProductServiceImpl` dengan yang baru, aplikasi tetap berjalan dengan baik tanpa perubahan besar pada _main code_.
+Saya memastikan bahwa **_subclass_ bisa menggantikan _superclass_ tanpa mengubah perilaku aplikasi**.
+Sebelumnya, `Car` punya atribut `carId` yang bisa menyebabkan kebingungan karena `Car` sudah inherit `productId` dari `Product`.
+Jadi perbaikannya yaitu `Car` sekarang hanya menggunakan `productId` sebagai identifier, jadi kode lebih konsisten dan mematuhi LSP.
+
+#### **Interface Segregation Principle (ISP)**
+ISP belum diterapkan karena _interface_ `CarService` punya semua metode CRUD dalam satu tempat.
+Solusinya, menurut saya mungkin bisa dipisahkan jadi dua _interface_ (`ReadOnlyCarService` dan `WritableCarService`) supaya modul hanya bergantung pada metode yang mereka gunakan.
 
 #### **DIP (Dependency Inversion Principle)**
-- Saya memastikan modul tingkat tinggi (seperti `CarServiceImpl`) tidak langsung bergantung pada modul tingkat rendah (`CarRepository`).
-- Saya menggunakan **_abstraction (interface)_** untuk menghubungkan `CarServiceImpl` dengan `CarRepository`, jadi implementasi penyimpanan bisa diganti tanpa mengubah logic utama.
+Saya memastikan modul tingkat tinggi (seperti `CarServiceImpl`) tidak langsung bergantung pada modul tingkat rendah (`CarRepository`).
+Saya menggunakan **_abstraction (interface)_** untuk menghubungkan `CarServiceImpl` dengan `CarRepository`, jadi implementasi penyimpanan bisa diganti tanpa mengubah logic utama.
 
 </details>
 
