@@ -8,7 +8,6 @@ import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-
     private final ProductRepository productRepository;
 
     @Autowired
@@ -18,8 +17,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product create(Product product) {
-        productRepository.create(product);
-        return product;
+        return productRepository.create(product);
     }
 
     @Override
@@ -34,13 +32,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product update(String productId, Product product) {
-        Product existingProduct = productRepository.findById(product.getProductId());
-        if (existingProduct != null) {
-            existingProduct.setProductName(product.getProductName());
-            existingProduct.setProductQuantity(product.getProductQuantity());
-            return productRepository.update(existingProduct);
-        }
-        return null;
+        return productRepository.update(productId, product);
     }
 
     @Override
