@@ -1,95 +1,91 @@
 package id.ac.ui.cs.advprog.eshop.repository;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
-import id.ac.ui.cs.advprog.eshop.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.List;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
 class ProductRepositoryTest {
 
-    @Mock
-    private ProductService productService;
-
-    @InjectMocks
     private ProductRepository productRepository;
 
-    private Product product;
-
     @BeforeEach
-    void setup() {
-        product = new Product();
-        product.setProductId("eb55e89f-1c39-460e-8860-71af6af63bd6");
-        product.setProductName("Sampo Cap Bambang");
-        product.setProductQuantity(100);
+    void setUp() {
+        productRepository = new ProductRepository();
     }
 
     @Test
-    void testCreate() {
-        when(productService.create(product)).thenReturn(product);
+    void testCreateProduct() {
+        Product product = new Product("1", "Laptop", 10);
         Product createdProduct = productRepository.create(product);
-        assertNotNull(createdProduct, "Created product should not be null");
-        assertEquals(product.getProductId(), createdProduct.getProductId());
-        assertEquals(product.getProductName(), createdProduct.getProductName());
-        assertEquals(product.getProductQuantity(), createdProduct.getProductQuantity());
+
+        assertNotNull(createdProduct);
+        assertEquals("Laptop", createdProduct.getProductName());
+        assertEquals(10, createdProduct.getProductQuantity());
     }
 
     @Test
     void testFindAll() {
-        when(productService.findAll()).thenReturn(List.of(product));
+        Product product1 = new Product("1", "Laptop", 10);
+        Product product2 = new Product("2", "Mouse", 20);
+        productRepository.create(product1);
+        productRepository.create(product2);
+
         List<Product> products = productRepository.findAll();
-        assertNotNull(products, "Products list should not be null");
-        assertEquals(1, products.size(), "There should be exactly one product");
-        assertTrue(products.contains(product), "The product should be in the list");
+        assertEquals(2, products.size());
     }
 
     @Test
-    void testFindById() {
-        when(productService.findById(product.getProductId())).thenReturn(product);
-        when(productService.findById("non-existent-id")).thenReturn(null);
-        Product foundProduct = productRepository.findById(product.getProductId());
-        Product notFoundProduct = productRepository.findById("non-existent-id");
-        assertNotNull(foundProduct, "Product should be found");
-        assertEquals(product.getProductId(), foundProduct.getProductId());
-        assertNull(notFoundProduct, "Product should not be found for a non-existent ID");
+    void testFindByIdExists() {
+        Product product = new Product("1", "Keyboard", 5);
+        productRepository.create(product);
+
+        Product foundProduct = productRepository.findById("1");
+        assertNotNull(foundProduct);
+        assertEquals("Keyboard", foundProduct.getProductName());
     }
 
     @Test
-    void testUpdate() {
-        when(productService.update(product.getProductId(), product)).thenReturn(product);
-        Product updatedProduct = productRepository.update(product);
-        assertNotNull(updatedProduct, "Updated product should not be null");
-        assertEquals(product.getProductId(), updatedProduct.getProductId());
-        assertEquals(product.getProductName(), updatedProduct.getProductName());
-        assertEquals(product.getProductQuantity(), updatedProduct.getProductQuantity());
+    void testFindByIdNotExists() {
+        Product foundProduct = productRepository.findById("99");
+        assertNull(foundProduct);
     }
 
     @Test
-    void testDelete() {
-        doNothing().when(productService).delete(product.getProductId());
-        when(productService.findAll()).thenReturn(List.of(product));
-        productRepository.delete(product.getProductId());
-        verify(productService, times(1)).delete(product.getProductId());
-        productRepository.findAll();
-        verify(productService, times(1)).findAll();
+    void testUpdateProductExists() {
+        Product product = new Product("1", "Monitor", 15);
+        productRepository.create(product);
+
+        Product updatedProduct = new Product("1", "Gaming Monitor", 30);
+        Product result = productRepository.update("1", updatedProduct);
+
+        assertNotNull(result);
+        assertEquals("Gaming Monitor", result.getProductName());
+        assertEquals(30, result.getProductQuantity());
     }
 
     @Test
-    void testDeleteNonExistentProduct() {
-        doNothing().when(productService).delete("non-existent-id");
-        when(productService.findAll()).thenReturn(List.of());
-        productRepository.delete("non-existent-id");
-        verify(productService, times(1)).delete("non-existent-id");
-        List<Product> products = productRepository.findAll();
-        assertTrue(products.isEmpty(), "Product list should be empty after attempting to delete non-existent product");
+    void testUpdateProductNotExists() {
+        Product updatedProduct = new Product("99", "Headset", 5);
+        Product result = productRepository.update("99", updatedProduct);
+
+        assertNull(result);
+    }
+
+    @Test
+    void testDeleteProductExists() {
+        Product product = new Product("1", "Speaker", 8);
+        productRepository.create(product);
+
+        productRepository.delete("1");
+        assertNull(productRepository.findById("1"));
+    }
+
+    @Test
+    void testDeleteProductNotExists() {
+        productRepository.delete("99");
+        assertTrue(productRepository.findAll().isEmpty());
     }
 }

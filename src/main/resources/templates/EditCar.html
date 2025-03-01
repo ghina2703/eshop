@@ -11,11 +11,11 @@
     <h1 class="text-3xl font-semibold text-center text-gray-800 mb-10">Edit Car Information</h1>
 
     <form th:action="@{/car/editCar}" method="post" th:object="${car}" class="max-w-3xl bg-white p-8 rounded-lg shadow-lg mx-auto" onsubmit="return validateQuantity()">
-        <input type="hidden" th:field="*{carId}" />
+        <input type="hidden" th:field="*{productId}" />
 
         <div class="mb-6">
             <label for="carName" class="block text-lg font-medium text-gray-700">Car Name</label>
-            <input type="text" id="carName" th:field="*{carName}" name="carName" th:value="${car.carName}"
+            <input type="text" id="carName" th:field="*{productName}" name="carName" th:value="${car.productName}"
                    class="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter car name">
         </div>
 
@@ -27,7 +27,7 @@
 
         <div class="mb-6">
             <label for="carQuantity" class="block text-lg font-medium text-gray-700">Car Quantity</label>
-            <input type="number" id="carQuantity" th:field="*{carQuantity}" name="carQuantity" th:value="${car.carQuantity}"
+            <input type="number" id="carQuantity" th:field="*{productQuantity}" name="carQuantity" th:value="${car.productQuantity}"
                    class="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter car quantity" required min="0">
             <small id="quantityHelp" class="form-text text-muted">Quantity harus >= 0</small>
         </div>

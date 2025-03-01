@@ -4,32 +4,30 @@ import id.ac.ui.cs.advprog.eshop.model.Car;
 import id.ac.ui.cs.advprog.eshop.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Service
-public class CarServiceImpl implements CarService{
-    @Autowired
-    private CarRepository carRepository;
+public class CarServiceImpl implements CarService {
+    private final CarRepository carRepository;
 
+    @Autowired
+    public CarServiceImpl(CarRepository carRepository) {
+        this.carRepository = carRepository;
+    }
 
     @Override
     public Car create(Car car) {
-        carRepository.create(car);
-        return car;
+        return carRepository.create(car);
     }
 
     @Override
     public List<Car> findAll() {
-        return carRepository.findAll();  // Ambil data dari repository, tidak ada logika tambahan
+        return carRepository.findAll();
     }
 
     @Override
     public Car findById(String carId) {
-        Car car = carRepository.findById(carId);
-        return car;
+        return carRepository.findById(carId);
     }
 
     @Override

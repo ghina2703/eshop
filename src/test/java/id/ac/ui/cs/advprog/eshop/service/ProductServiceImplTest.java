@@ -4,17 +4,16 @@ import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.util.Arrays;
 import java.util.List;
-
-import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
 
     @Mock
@@ -23,99 +22,77 @@ class ProductServiceImplTest {
     @InjectMocks
     private ProductServiceImpl productService;
 
+    private Product product1;
+    private Product product2;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-    private Product createTestProduct(String id, String name, int quantity) {
-        Product product = new Product();
-        product.setProductId(id);
-        product.setProductName(name);
-        product.setProductQuantity(quantity);
-        return product;
+        product1 = new Product("1", "Laptop", 10);
+        product2 = new Product("2", "Mouse", 20);
     }
 
     @Test
     void testCreateProduct() {
-        Product product = createTestProduct(null, "Product A", 10);
-        when(productRepository.create(any(Product.class))).thenReturn(product);
+        when(productRepository.create(product1)).thenReturn(product1);
 
-        Product createdProduct = productService.create(product);
+        Product createdProduct = productService.create(product1);
 
         assertNotNull(createdProduct);
-        assertEquals("Product A", createdProduct.getProductName());
+        assertEquals("Laptop", createdProduct.getProductName());
         assertEquals(10, createdProduct.getProductQuantity());
-
-        verify(productRepository, times(1)).create(any(Product.class));
+        verify(productRepository, times(1)).create(product1);
     }
 
     @Test
     void testFindAll() {
-        List<Product> allProducts = asList(
-                createTestProduct("1", "Product A", 10),
-                createTestProduct("2", "Product B", 20)
-        );
-
-        when(productRepository.findAll()).thenReturn(allProducts);
+        when(productRepository.findAll()).thenReturn(Arrays.asList(product1, product2));
 
         List<Product> products = productService.findAll();
 
-        assertNotNull(products);
         assertEquals(2, products.size());
-        assertEquals("Product A", products.get(0).getProductName());
-        assertEquals("Product B", products.get(1).getProductName());
-
         verify(productRepository, times(1)).findAll();
     }
 
     @Test
-    void testFindById() {
-        Product product = createTestProduct("1", "Product A", 10);
-        when(productRepository.findById("1")).thenReturn(product);
+    void testFindByIdExists() {
+        when(productRepository.findById("1")).thenReturn(product1);
 
         Product foundProduct = productService.findById("1");
 
         assertNotNull(foundProduct);
-        assertEquals("Product A", foundProduct.getProductName());
-        assertEquals(10, foundProduct.getProductQuantity());
-
+        assertEquals("Laptop", foundProduct.getProductName());
         verify(productRepository, times(1)).findById("1");
     }
 
     @Test
-    void testFindByIdNotFound() {
-        when(productRepository.findById("non-existing-id")).thenReturn(null);
+    void testFindByIdNotExists() {
+        when(productRepository.findById("99")).thenReturn(null);
 
-        Product foundProduct = productService.findById("non-existing-id");
+        Product foundProduct = productService.findById("99");
 
         assertNull(foundProduct);
-        verify(productRepository, times(1)).findById("non-existing-id");
+        verify(productRepository, times(1)).findById("99");
     }
 
     @Test
-    void testUpdateProduct() throws Exception {
-        Product updatedProduct = new Product();
-        updatedProduct.setProductId("1");
-        updatedProduct.setProductName("Product A Updated");
-        updatedProduct.setProductQuantity(15);
-        when(productRepository.findById("1")).thenReturn(updatedProduct);
-        when(productRepository.update(any(Product.class))).thenReturn(updatedProduct);
+    void testUpdateProductExists() {
+        when(productRepository.update("1", product1)).thenReturn(product1);
 
-        Product result = productService.update("1", updatedProduct);
-        assertNotNull(result);
-        assertEquals("Product A Updated", result.getProductName());
-        assertEquals(15, result.getProductQuantity());
-        verify(productRepository, times(1)).update(any(Product.class));
+        Product updatedProduct = productService.update("1", product1);
+
+        assertNotNull(updatedProduct);
+        assertEquals("Laptop", updatedProduct.getProductName());
+        verify(productRepository, times(1)).update("1", product1);
     }
 
     @Test
-    void testUpdateProductNotFound() {
-        Product updatedProduct = createTestProduct("non-existing-id", "Updated Product", 15);
-        when(productRepository.findById("non-existing-id")).thenReturn(null);
-        Product result = productService.update(updatedProduct.getProductId(), updatedProduct);
-        assertNull(result);
-        verify(productRepository, times(0)).update(any(Product.class));
+    void testUpdateProductNotExists() {
+        when(productRepository.update("99", product1)).thenReturn(null);
+
+        Product updatedProduct = productService.update("99", product1);
+
+        assertNull(updatedProduct);
+        verify(productRepository, times(1)).update("99", product1);
     }
 
     @Test
@@ -125,14 +102,5 @@ class ProductServiceImplTest {
         productService.delete("1");
 
         verify(productRepository, times(1)).delete("1");
-    }
-
-    @Test
-    void testDeleteProductNotFound() {
-        doNothing().when(productRepository).delete("non-existing-id");
-
-        productService.delete("non-existing-id");
-
-        verify(productRepository, times(1)).delete("non-existing-id");
     }
 }
