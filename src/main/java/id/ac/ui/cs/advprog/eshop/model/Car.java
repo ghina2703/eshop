@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Car extends Product {
-    private String carId;
     private String carColor;
 
     public Car(String productId, String productName, int productQuantity, String carColor) {

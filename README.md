@@ -19,12 +19,15 @@
   <summary>Click to Expand: 1️⃣ Prinsip SOLID yang saya terapkan dalam proyek ini</summary>
 
 #### **SRP (Single Responsibility Principle)**
-Dalam modul ini, _class_ `CarServiceImpl` hanya bertanggung jawab atas bisnis logic terkait Car (create, find, update, dan delet Car). 
+Dalam modul ini, _class_ `CarServiceImpl` hanya bertanggung jawab atas bisnis logic terkait Car (create, find, update, dan delete Car). 
 Penyimpanan data dikelola oleh `CarRepository`, jadi setiap _class_ punya tanggung jawab yang jelas.
 
 #### **OCP (Open/Closed Principle)**
 Kode harus **terbuka untuk _extension_, tapi tertutup untuk _modification_**. Saya menerapkan OCP dengan menggunakan _interface_ `CarService`.
 Kalau saya ingin menambahkan cara penyimpanan baru, saya bisa membuat implementasi baru tanpa mengubah kode yang sudah ada.
+
+Selain itu, dalam **model data**, saya menerapkan prinsip ini dengan membuat Car sebagai _subclass_ dari Product menggunakan **_inheritance_ (Car _extends_ Product)**.
+Dengan cara ini, kalau saya mau menambahkan jenis produk lain (misalnya Truck), saya bisa membuat _subclass_ baru yang inherit Product tanpa harus mengubah struktur Product yang sudah ada.
 
 #### **LSP (Liskov Substitution Principle)**
 Saya memastikan bahwa **_subclass_ bisa menggantikan _superclass_ tanpa mengubah perilaku aplikasi**.

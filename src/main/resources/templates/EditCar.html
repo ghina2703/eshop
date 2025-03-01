@@ -11,7 +11,7 @@
     <h1 class="text-3xl font-semibold text-center text-gray-800 mb-10">Edit Car Information</h1>
 
     <form th:action="@{/car/editCar}" method="post" th:object="${car}" class="max-w-3xl bg-white p-8 rounded-lg shadow-lg mx-auto" onsubmit="return validateQuantity()">
-        <input type="hidden" th:field="*{carId}" />
+        <input type="hidden" th:field="*{productId}" />
 
         <div class="mb-6">
             <label for="carName" class="block text-lg font-medium text-gray-700">Car Name</label>
