@@ -9,12 +9,27 @@ import java.util.List;
 import java.util.Map;
 
 public class PaymentService {
-    private PaymentRepository paymentRepository;
-    private OrderRepository orderRepository;
+    private final PaymentRepository paymentRepository;
+    private final OrderRepository orderRepository;
 
     public PaymentService(PaymentRepository paymentRepository, OrderRepository orderRepository) {
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
+    }
+
+    public Payment addVoucherPayment(Order order, String voucherCode) {
+        if (!isValidVoucherCode(voucherCode)) {
+            throw new IllegalArgumentException("Invalid voucher code");
+        }
+
+        Map<String, String> paymentData = Map.of("voucherCode", voucherCode);
+        Payment payment = new Payment(order.getId() + "-payment", "Voucher", "SUCCESS", paymentData);
+        paymentRepository.save(payment);
+        return payment;
+    }
+
+    private boolean isValidVoucherCode(String voucherCode) {
+        return voucherCode.length() == 16 && voucherCode.startsWith("ESHOP") && voucherCode.substring(5).matches("\\d{8}");
     }
 
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
