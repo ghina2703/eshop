@@ -7,13 +7,11 @@ import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
 import id.ac.ui.cs.advprog.eshop.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class PaymentServiceTest {
@@ -90,9 +88,31 @@ class PaymentServiceTest {
         when(paymentRepository.findById(anyString())).thenReturn(payment);
 
         Payment result = paymentService.getPayment("12345-payment");
+
         assertNotNull(result);
         assertEquals("12345-payment", result.getId());
     }
 
+    @Test
+    void testAddVoucherPaymentValidCode() {
+        Map<String, String> paymentData = Map.of("voucherCode", "ESHOP1234ABC5678");
 
+        Payment result = paymentService.addVoucherPayment(order, "ESHOP1234ABC5678");
+
+        assertNotNull(result);
+        assertEquals("SUCCESS", result.getStatus());
+
+        verify(paymentRepository, times(1)).save(result);
+    }
+
+    @Test
+    void testAddVoucherPaymentInvalidCode() {
+        Map<String, String> paymentData = Map.of("voucherCode", "INVALIDCODE");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            paymentService.addVoucherPayment(order, "INVALIDCODE");
+        });
+
+        verify(paymentRepository, never()).save(any(Payment.class));
+    }
 }
