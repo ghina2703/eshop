@@ -62,4 +62,19 @@ public class PaymentService {
     public List<Payment> getAllPayments() {
         return paymentRepository.findAll();
     }
+
+    public Payment addBankTransferPayment(Order order, String bankAccount) {
+        if (!isValidBankAccount(bankAccount)) {
+            throw new IllegalArgumentException("Invalid bank account");
+        }
+
+        Map<String, String> paymentData = Map.of("bankAccount", bankAccount);
+        Payment payment = new Payment(order.getId() + "-payment", "Bank Transfer", "SUCCESS", paymentData);
+        paymentRepository.save(payment);
+        return payment;
+    }
+
+    private boolean isValidBankAccount(String bankAccount) {
+        return bankAccount.matches("\\d{9}");
+    }
 }
