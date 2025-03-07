@@ -9,10 +9,18 @@ public class PaymentRepository {
     private List<Payment> payments = new ArrayList<>();
 
     public void save(Payment payment) {
-        payments.add(payment);
+        if (payment != null) {
+            payments.add(payment);
+        } else {
+            throw new IllegalArgumentException("Cannot save null payment");
+        }
     }
 
     public Payment findById(String id) {
+        if (id == null || id.isEmpty()) {
+            throw new IllegalArgumentException("ID cannot be null or empty");
+        }
+
         for (Payment payment : payments) {
             if (payment.getId().equals(id)) {
                 return payment;
@@ -22,6 +30,6 @@ public class PaymentRepository {
     }
 
     public List<Payment> findAll() {
-        return payments;
+        return new ArrayList<>(payments);
     }
 }
