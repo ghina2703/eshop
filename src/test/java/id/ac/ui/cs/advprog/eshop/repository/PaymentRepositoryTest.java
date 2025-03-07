@@ -1,7 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.repository;
 
 import id.ac.ui.cs.advprog.eshop.model.Payment;
-import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -45,5 +44,16 @@ class PaymentRepositoryTest {
     void testFindByIdNotFound() {
         Payment foundPayment = paymentRepository.findById("nonexistent-id");
         assertNull(foundPayment);
+    }
+
+    @Test
+    void testFindByIdWithInvalidId() {
+        assertThrows(IllegalArgumentException.class, () -> paymentRepository.findById(null));
+        assertThrows(IllegalArgumentException.class, () -> paymentRepository.findById(""));
+    }
+
+    @Test
+    void testSaveWithNullPayment() {
+        assertThrows(IllegalArgumentException.class, () -> paymentRepository.save(null));
     }
 }
