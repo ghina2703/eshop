@@ -9,10 +9,10 @@ public class Payment {
     private Map<String, String> paymentData;
 
     public Payment(String id, String method, String status, Map<String, String> paymentData) {
-        this.id = id;
-        this.method = method;
-        this.status = status;
-        this.paymentData = paymentData;
+        this.setId(id);
+        this.setMethod(method);
+        this.setStatus(status);
+        this.setPaymentData(paymentData);
     }
 
     public String getId() {
@@ -20,6 +20,9 @@ public class Payment {
     }
 
     public void setId(String id) {
+        if (id == null || id.isEmpty()) {
+            throw new IllegalArgumentException("ID cannot be null or empty");
+        }
         this.id = id;
     }
 
@@ -28,6 +31,9 @@ public class Payment {
     }
 
     public void setMethod(String method) {
+        if (method == null || method.isEmpty()) {
+            throw new IllegalArgumentException("Method cannot be null or empty");
+        }
         this.method = method;
     }
 
@@ -36,6 +42,9 @@ public class Payment {
     }
 
     public void setStatus(String status) {
+        if (status == null || status.isEmpty()) {
+            throw new IllegalArgumentException("Status cannot be null or empty");
+        }
         this.status = status;
     }
 
@@ -44,6 +53,9 @@ public class Payment {
     }
 
     public void setPaymentData(Map<String, String> paymentData) {
+        if (paymentData == null || paymentData.isEmpty()) {
+            throw new IllegalArgumentException("Payment data cannot be null or empty");
+        }
         this.paymentData = paymentData;
     }
 }
