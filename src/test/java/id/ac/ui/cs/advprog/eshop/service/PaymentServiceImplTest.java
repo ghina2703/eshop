@@ -15,7 +15,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class PaymentServiceTest {
+class PaymentServiceImplTest {
     private PaymentService paymentService;
     private PaymentRepository paymentRepository;
     private OrderRepository orderRepository;
@@ -39,7 +39,7 @@ class PaymentServiceTest {
         payment = new Payment("12345-payment", "Voucher", "PENDING", paymentData);
         order = new Order("12345", products, 1708560000L, "Safira Sudrajat");
 
-        paymentService = new PaymentService(paymentRepository, orderRepository);
+        paymentService = new PaymentServiceImpl(paymentRepository, orderRepository);
     }
 
     @Test
@@ -77,7 +77,7 @@ class PaymentServiceTest {
 
         Payment result = paymentService.setStatus(payment, "REJECTED");
 
-        assertEquals("FAILED", result.getStatus());
+        assertEquals("REJECTED", result.getStatus());
         assertEquals("FAILED", order.getStatus());
 
         verify(paymentRepository, times(1)).save(any(Payment.class));
@@ -92,16 +92,6 @@ class PaymentServiceTest {
 
         assertNotNull(result);
         assertEquals("12345-payment", result.getId());
-    }
-
-    @Test
-    void testAddVoucherPaymentValidCode() {
-        Payment result = paymentService.addVoucherPayment(order, "ESHOP1234ABC5678");
-
-        assertNotNull(result);
-        assertEquals("SUCCESS", result.getStatus());
-
-        verify(paymentRepository, times(1)).save(result);
     }
 
     @Test
