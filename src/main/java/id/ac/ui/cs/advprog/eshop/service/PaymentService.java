@@ -1,40 +1,50 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Order;
-import id.ac.ui.cs.advprog.eshop.enums.OrderStatus;
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
+import id.ac.ui.cs.advprog.eshop.repository.OrderRepository;
 
+import java.util.List;
 import java.util.Map;
 
 public class PaymentService {
-    private final PaymentRepository paymentRepository;
+    private PaymentRepository paymentRepository;
+    private OrderRepository orderRepository;
 
-    public PaymentService(PaymentRepository paymentRepository) {
+    public PaymentService(PaymentRepository paymentRepository, OrderRepository orderRepository) {
         this.paymentRepository = paymentRepository;
+        this.orderRepository = orderRepository;
     }
 
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
-        Payment payment = new Payment(order.getId(), method, OrderStatus.WAITING_PAYMENT.getValue(), paymentData);
+        String paymentId = order.getId() + "-payment";
+        Payment payment = new Payment(paymentId, method, "PENDING", paymentData);
         paymentRepository.save(payment);
         return payment;
     }
 
-    public void setStatus(Payment payment, OrderStatus status) {
-        if (status == OrderStatus.SUCCESS) {
-            payment.setStatus(OrderStatus.SUCCESS.getValue());
-            paymentRepository.save(payment);
-            Order order = new Order(payment.getId(), null, 1708560000L, "Safira Sudrajat");
-            order.setStatus(OrderStatus.SUCCESS.getValue());
-        } else if (status == OrderStatus.FAILED) {
-            payment.setStatus(OrderStatus.FAILED.getValue());
-            paymentRepository.save(payment);
-            Order order = new Order(payment.getId(), null, 1708560000L, "Safira Sudrajat");
-            order.setStatus(OrderStatus.FAILED.getValue());
+    public Payment setStatus(Payment payment, String status) {
+        payment.setStatus(status);
+        paymentRepository.save(payment);
+
+        Order order = orderRepository.findById(payment.getId());
+        if (order != null) {
+            if ("SUCCESS".equals(status)) {
+                order.setStatus("SUCCESS");
+            } else if ("REJECTED".equals(status)) {
+                order.setStatus("FAILED");
+            }
+            orderRepository.save(order);
         }
+        return payment;
     }
 
     public Payment getPayment(String paymentId) {
         return paymentRepository.findById(paymentId);
+    }
+
+    public List<Payment> getAllPayments() {
+        return paymentRepository.findAll();
     }
 }
