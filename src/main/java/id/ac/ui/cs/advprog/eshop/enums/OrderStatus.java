@@ -15,9 +15,13 @@ public enum OrderStatus {
         this.value = value;
     }
 
+    public String getValue() {
+        return value;
+    }
+
     public static boolean contains(String param) {
-        for (OrderStatus orderStatus : OrderStatus.values()) {
-            if (orderStatus.name().equals(param)) {
+        for (OrderStatus status : OrderStatus.values()) {
+            if (status.getValue().equals(param)) {
                 return true;
             }
         }

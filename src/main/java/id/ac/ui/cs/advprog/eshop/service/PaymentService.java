@@ -1,7 +1,8 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
-import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.model.Order;
+import id.ac.ui.cs.advprog.eshop.enums.OrderStatus;
+import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
 
 import java.util.Map;
@@ -14,20 +15,22 @@ public class PaymentService {
     }
 
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
-        Payment payment = new Payment(order.getId(), method, "PENDING", paymentData);
+        Payment payment = new Payment(order.getId(), method, OrderStatus.WAITING_PAYMENT.getValue(), paymentData);
         paymentRepository.save(payment);
         return payment;
     }
 
-    public void setStatus(Payment payment, String status) {
-        if (status.equals("SUCCESS")) {
-            payment.setStatus("SUCCESS");
-            paymentRepository.save(payment);
-        } else if (status.equals("REJECTED")) {
-            payment.setStatus("REJECTED");
+    public void setStatus(Payment payment, OrderStatus status) {
+        if (status == OrderStatus.SUCCESS) {
+            payment.setStatus(OrderStatus.SUCCESS.getValue());
             paymentRepository.save(payment);
             Order order = new Order(payment.getId(), null, 1708560000L, "Safira Sudrajat");
-            order.setStatus("FAILED");
+            order.setStatus(OrderStatus.SUCCESS.getValue());
+        } else if (status == OrderStatus.FAILED) {
+            payment.setStatus(OrderStatus.FAILED.getValue());
+            paymentRepository.save(payment);
+            Order order = new Order(payment.getId(), null, 1708560000L, "Safira Sudrajat");
+            order.setStatus(OrderStatus.FAILED.getValue());
         }
     }
 
