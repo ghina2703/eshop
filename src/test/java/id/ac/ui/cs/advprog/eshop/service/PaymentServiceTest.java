@@ -7,6 +7,7 @@ import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
 import id.ac.ui.cs.advprog.eshop.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -95,8 +96,6 @@ class PaymentServiceTest {
 
     @Test
     void testAddVoucherPaymentValidCode() {
-        Map<String, String> paymentData = Map.of("voucherCode", "ESHOP1234ABC5678");
-
         Payment result = paymentService.addVoucherPayment(order, "ESHOP1234ABC5678");
 
         assertNotNull(result);
@@ -107,12 +106,46 @@ class PaymentServiceTest {
 
     @Test
     void testAddVoucherPaymentInvalidCode() {
-        Map<String, String> paymentData = Map.of("voucherCode", "INVALIDCODE");
-
         assertThrows(IllegalArgumentException.class, () -> {
             paymentService.addVoucherPayment(order, "INVALIDCODE");
         });
 
         verify(paymentRepository, never()).save(any(Payment.class));
+    }
+
+    @Test
+    void testAddBankTransferPaymentValidData() {
+        Map<String, String> paymentData = Map.of("bankAccount", "123456789");
+
+        Payment result = paymentService.addBankTransferPayment(order, "123456789");
+
+        assertNotNull(result);
+        assertEquals("SUCCESS", result.getStatus());
+        verify(paymentRepository, times(1)).save(result);
+    }
+
+    @Test
+    void testAddBankTransferPaymentInvalidData() {
+        String invalidBankAccount = "INVALID_ACCOUNT";
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            paymentService.addBankTransferPayment(order, invalidBankAccount);
+        });
+
+        verify(paymentRepository, never()).save(any(Payment.class));
+    }
+
+    @Test
+    void testSetStatusBankTransferSuccess() {
+        doNothing().when(paymentRepository).save(any(Payment.class));
+        when(orderRepository.findById(anyString())).thenReturn(order);
+
+        Payment result = paymentService.setStatus(payment, "SUCCESS");
+
+        assertEquals("SUCCESS", result.getStatus());
+        assertEquals("SUCCESS", order.getStatus());
+
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+        verify(orderRepository, times(1)).save(any(Order.class));
     }
 }
