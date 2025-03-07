@@ -1,5 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.model;
 
+import id.ac.ui.cs.advprog.eshop.model.Payment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,5 +37,29 @@ class PaymentTest {
 
         payment.setMethod("Bank Transfer");
         assertEquals("Bank Transfer", payment.getMethod());
+    }
+
+    @Test
+    void testSetIdWithInvalidValue() {
+        assertThrows(IllegalArgumentException.class, () -> payment.setId(""));
+        assertThrows(IllegalArgumentException.class, () -> payment.setId(null));
+    }
+
+    @Test
+    void testSetPaymentDataWithInvalidValue() {
+        assertThrows(IllegalArgumentException.class, () -> payment.setPaymentData(null));
+        assertThrows(IllegalArgumentException.class, () -> payment.setPaymentData(Map.of()));
+    }
+
+    @Test
+    void testSetMethodWithInvalidValue() {
+        assertThrows(IllegalArgumentException.class, () -> payment.setMethod(""));
+        assertThrows(IllegalArgumentException.class, () -> payment.setMethod(null));
+    }
+
+    @Test
+    void testSetStatusWithInvalidValue() {
+        assertThrows(IllegalArgumentException.class, () -> payment.setStatus(""));
+        assertThrows(IllegalArgumentException.class, () -> payment.setStatus(null));
     }
 }
