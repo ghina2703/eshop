@@ -10,6 +10,42 @@
 
 **Link Koyeb Car**      : https://ridiculous-debor-ghina27-238eb2a3.koyeb.app/car/listCar 
 
+# 🚀 Tutorial 4️⃣
+
+### Reflection
+
+<details>
+
+  <summary>Click to Expand: 1️⃣ Reflection Alur Test-Driven Development (TDD)</summary>
+
+Menurut Percival (2017), alur TDD yang dilakukan pada tutorial di atas sangat membantu dalam merancang dan meng-_improve_ kode. Melalui _cycle_ yang berulang (Write Test, Run Test, Refactor), kita bisa memastikan kalau kode yang ditulis sudah benar-benar memenuhi kebutuhan fungsional dan tidak ada kesalahan yang terlewat. Dalam tugas ini, alur TDD sangat berguna bagi saya, terutama dalam memastikan kalau setiap fungsionalitas yang ditambahkan sudah diuji secara mendalam. Test pertama yang ditulis sangat membantu saya mengidentifikasi kebutuhan dan kasus penggunaan yang penting dalam aplikasi. Proses _refactoring_ kode juga sangat lancar karena adanya tes yang terus menerus membantu untuk menjaga kode tetap stabil.
+
+Tapi masih ada beberapa hal yang perlu diperhatikan. Sebagai contoh, kadang saya merasa terlalu fokus pada menulis tes terlebih dahulu yang kadang membuat proses menulis kode implementasi sedikit terhambat. Ke depannya, saya perlu lebih fleksibel dan menghindari terlalu fokus pada penulisan tes untuk setiap _changes_ kecil. Saya juga perlu lebih fokus ke penulisan tes yang lebih jelas dan mendetail untuk mencakup semua _conditions_ yang ada.
+
+</details>
+
+---
+
+<details>
+
+  <summary>Click to Expand: 2️⃣ Reflection Penerapan Prinsip F.I.R.S.T. di Unit Testing</summary>
+
+F.I.R.S.T. menjelaskan tentang 5 prinsip penting untuk penulisan _unit testing_, yaitu: Fast, Independent, Repeatable, Self-validating, dan Timely. Dalam tutorial modul ini, saya berusaha mengikuti prinsip-prinsip tersebut.
+
+- **Fast**: Tes yang saya buat cukup cepat dijalankan. Setiap tes hanya memeriksa unit-unit kecil dari fungsionalitas, seperti pengujian metode `createOrder`, `updateStatus`, `findById`, dan `findAllByAuthor`. Karena itu, tes bisa dijalankan dengan cepat tanpa banyak ketergantungan antar tes.
+
+- **Independent**: Setiap _unit test_ yang dibuat independen dan tidak bergantung satu sama lain. Misalnya, _test_ `createOrder` tidak terpengaruh oleh _test_ `updateStatus`. Ini memungkinkan saya untuk memodifikasi tes tanpa takut mengganggu tes lainnya.
+
+- **Repeatable**: Tes yang ditulis bisa dijalankan kapan saja tanpa ada ketergantungan pada _environment_ atau urutan _testing_ lainnya. Saya pastikan setiap tes dimulai dengan keadaan yang konsisten menggunakan _method_ `@BeforeEach`.
+
+- **Self-validating**: Tes yang saya buat menggunakan _assert statement_ untuk memvalidasi hasilnya secara otomatis. Contohnya menggunakan `assertEquals()` untuk memeriksa apakah _value_ yang dihasilkan sesuai dengan _expected value_. Jadi, tes tersebut bisa memvalidasi dirinya sendiri tanpa dilakukan secara manual.
+
+- **Timely**: Saya berusaha menulis tes saat fitur yang akan di tes sudah jelas dan sebelum implementasi dimulai, seperti yang diterapkan dalam alur TDD. Ini memastikan kalau fitur yang dibuat langsung di tes dan diperbaiki kalau ada masalah yang terdeteksi.
+
+</details>
+
+---
+
 # 🚀 Tutorial 3️⃣
 
 ### Reflection
@@ -30,7 +66,7 @@ Selain itu, dalam **model data**, saya menerapkan prinsip ini dengan membuat Car
 Dengan cara ini, kalau saya mau menambahkan jenis produk lain (misalnya Truck), saya bisa membuat _subclass_ baru yang inherit Product tanpa harus mengubah struktur Product yang sudah ada.
 
 #### **LSP (Liskov Substitution Principle)**
-Saya memastikan bahwa **_subclass_ bisa menggantikan _superclass_ tanpa mengubah perilaku aplikasi**.
+Saya memastikan kalau **_subclass_ bisa menggantikan _superclass_ tanpa mengubah perilaku aplikasi**.
 Sebelumnya, `Car` punya atribut `carId` yang bisa menyebabkan kebingungan karena `Car` sudah inherit `productId` dari `Product`.
 Jadi perbaikannya yaitu `Car` sekarang hanya menggunakan `productId` sebagai identifier, jadi kode lebih konsisten dan mematuhi LSP.
 
@@ -64,7 +100,7 @@ Dengan **OCP**, saya bisa menambahkan fitur baru tanpa harus mengubah kode lama.
 Contohnya kalau saya ingin menambahkan fitur pencatatan _log_ setiap kali Car diperbarui, saya bisa membuat _decorator_ atau _subclass_ tanpa mengubah `CarServiceImpl`.
 
 #### **Mengurangi ketergantungan antar _class_ (Loose Coupling)**
-Dengan menerapkan **DIP** dan **ISP**, saya memastikan bahwa setiap _class_ hanya bergantung pada apa yang benar-benar dibutuhkan.
+Dengan menerapkan **DIP** dan **ISP**, saya memastikan kalau setiap _class_ hanya bergantung pada apa yang benar-benar dibutuhkan.
 Contohnya `CarServiceImpl` hanya berkomunikasi dengan `CarRepository` melalui _interface_, bukan langsung ke implementasi penyimpanan tertentu.
 Ini membuat _code_ lebih fleksibel karena saya bisa mengganti penyimpanan tanpa mengubah main implementation nya.
 
@@ -121,7 +157,7 @@ Selama pengerjaan _exercise_ ini, ada beberapa masalah _code quality_ yang berha
 
 - Saya menghapus beberapa _import_ yang tidak digunakan dalam kode, seperti `java.util.ArrayList` dan `java.util.Iterator`. Masalah ini biasanya muncul karena adanya *import* yang tidak terpakai dalam _class_ yang bisa merusak implementasi _clean code_ .
 
-- Ada _warning_ terkait penggunaan `{}` yang hilang pada beberapa *if statements* dan _loop_. Saya menambahkan `{}` untuk meningkatkan _code readability_ dan memastikan bahwa aturan ini mengikuti _best practices_ untuk menjaga _maintainability_.
+- Ada _warning_ terkait penggunaan `{}` yang hilang pada beberapa *if statements* dan _loop_. Saya menambahkan `{}` untuk meningkatkan _code readability_ dan memastikan kalau aturan ini mengikuti _best practices_ untuk menjaga _maintainability_.
 
 - _Warning_ di _class_ `EshopApplication` yang punya _public constructor_ walaupun hanya berisi _static method_. Karena `EshopApplication` berfungsi sebagai _main class_, saya tidak menggunakan _private constructor_, tapi saya menambahkan `@SuppressWarnings("PMD.UseUtilityClass")` untuk memastikan _class_ EshopApplication tetap bisa berfungsi sebagai _entry point_ app Spring Boot tanpa masalah dengan _utility class warning_.
 
@@ -140,8 +176,8 @@ Setelah mengimplementasikan _pipeline_ CI/CD, saya merasa proses yang ada sudah 
 
 - Setelah _code_ berhasil melewati proses CI, _pipeline_ langsung meng-_deploy_ aplikasi ke **PaaS** (saya menggunakan **Koyeb**) dengan mekanisme _**auto-deploy**_ berbasis **Docker**. Jadi setiap perubahan kode yang lolos tes akan langsung tersedia di _automated production pipeline_, ini merupakan inti dari implementasi **CD**.
 
-- Selain itu, saya juga menggunakan **Scorecard** untuk melakukan **_security analysis_** sebagai bagian dari proses CI, hal ini membantu untuk memastikan bahwa semua kode yang di-_deploy_ memenuhi standar keamanan tertentu.
-- Saya juga memanfaatkan GitHub Actions untuk mengintegrasikan _testing_, _code analysis_, dan _auto-deployment_ untuk memastikan bahwa app selalu siap untuk otomatis di-_deploy_ ke server produksi setiap kali ada perubahan yang di-_push_ ke _repo_.
+- Selain itu, saya juga menggunakan **Scorecard** untuk melakukan **_security analysis_** sebagai bagian dari proses CI, hal ini membantu untuk memastikan kalau semua kode yang di-_deploy_ memenuhi standar keamanan tertentu.
+- Saya juga memanfaatkan GitHub Actions untuk mengintegrasikan _testing_, _code analysis_, dan _auto-deployment_ untuk memastikan kalau app selalu siap untuk otomatis di-_deploy_ ke server produksi setiap kali ada perubahan yang di-_push_ ke _repo_.
 
 </details>
 
