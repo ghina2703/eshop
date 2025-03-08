@@ -45,9 +45,11 @@ public class PaymentController {
     @PostMapping("/admin/set-status/{paymentId}")
     public String setPaymentStatus(@PathVariable String paymentId, @RequestParam String status) {
         Payment payment = paymentService.getPayment(paymentId);
-        if (payment != null) {
+
+        if (payment != null && (status.equals("SUCCESS") || status.equals("REJECTED"))) {
             paymentService.setStatus(payment, status);
         }
+
         return "redirect:/payment/admin/list";
     }
 }

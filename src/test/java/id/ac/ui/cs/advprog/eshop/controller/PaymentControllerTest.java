@@ -99,7 +99,83 @@ class PaymentControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/payment/admin/list"));
 
-        verify(paymentService, atMost(1)).setStatus(payment, "SUCCESS"); // Hanya pastikan max 1x pemanggilan
+        verify(paymentService, atMost(1)).setStatus(payment, "SUCCESS");
+    }
+
+    @Test
+    void testSetPaymentStatus_SuccessfulPayment() throws Exception {
+        Payment payment = new Payment("123-payment", "Voucher", null);
+        when(paymentService.getPayment("123-payment")).thenReturn(payment);
+
+        mockMvc.perform(post("/payment/admin/set-status/123-payment")
+                        .param("status", "SUCCESS"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/payment/admin/list"));
+
+        verify(paymentService, times(1)).setStatus(payment, "SUCCESS");
+    }
+
+    @Test
+    void testSetPaymentStatus_PaymentNotFound() throws Exception {
+        when(paymentService.getPayment("invalid-payment")).thenReturn(null);
+
+        mockMvc.perform(post("/payment/admin/set-status/invalid-payment")
+                        .param("status", "SUCCESS"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/payment/admin/list"));
+
+        verify(paymentService, never()).setStatus(any(), any());
+    }
+
+    @Test
+    void testSetPaymentStatus_InvalidStatus() throws Exception {
+        Payment payment = new Payment("123-payment", "Voucher", null);
+        when(paymentService.getPayment("123-payment")).thenReturn(payment);
+
+        mockMvc.perform(post("/payment/admin/set-status/123-payment")
+                        .param("status", "INVALID_STATUS"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/payment/admin/list"));
+
+        verify(paymentService, never()).setStatus(any(), eq("INVALID_STATUS"));
+    }
+
+    @Test
+    void testSetPaymentStatus_NullPayment() throws Exception {
+        when(paymentService.getPayment("null-payment")).thenReturn(null);
+
+        mockMvc.perform(post("/payment/admin/set-status/null-payment")
+                        .param("status", "SUCCESS"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/payment/admin/list"));
+
+        verify(paymentService, never()).setStatus(any(), any());
+    }
+
+    @Test
+    void testSetPaymentStatus_EmptyStatus() throws Exception {
+        Payment payment = new Payment("123-payment", "Voucher", null);
+        when(paymentService.getPayment("123-payment")).thenReturn(payment);
+
+        mockMvc.perform(post("/payment/admin/set-status/123-payment")
+                        .param("status", ""))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/payment/admin/list"));
+
+        verify(paymentService, never()).setStatus(any(), any());
+    }
+
+    @Test
+    void testSetPaymentStatus_NullStatus() throws Exception {
+        Payment payment = new Payment("123-payment", "Voucher", null);
+        when(paymentService.getPayment("123-payment")).thenReturn(payment);
+
+        mockMvc.perform(post("/payment/admin/set-status/123-payment")
+                        .param("status", ""))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/payment/admin/list"));
+
+        verify(paymentService, never()).setStatus(any(), any());
     }
 
 }
