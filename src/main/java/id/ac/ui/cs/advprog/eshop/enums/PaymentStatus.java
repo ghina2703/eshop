@@ -10,13 +10,13 @@ public enum PaymentStatus {
 
     private final String value;
 
-    private PaymentStatus(String value) {
+    PaymentStatus(String value) {
         this.value = value;
     }
 
-    public static boolean contains (String param) {
-        for (PaymentStatus paymentStatus : PaymentStatus.values()) {
-            if (paymentStatus.getValue().equals(param)) {
+    public static boolean contains(String param) {
+        for (PaymentStatus status : values()) {
+            if (status.getValue().equals(param)) {
                 return true;
             }
         }
